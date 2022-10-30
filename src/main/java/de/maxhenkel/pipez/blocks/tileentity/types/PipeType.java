@@ -7,15 +7,14 @@ import de.maxhenkel.pipez.blocks.tileentity.PipeLogicTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.UpgradeTileEntity;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class PipeType<T> {
@@ -106,17 +105,62 @@ public abstract class PipeType<T> {
         }
     }
 
-    public boolean deepFuzzyCompare(Tag meta, Tag item) {
-        if (meta instanceof CompoundTag) {
-            if (!(item instanceof CompoundTag)) {
+
+    boolean stringListFuncCompare(String comparisonString, ListTag tag){
+        char comparisonFunc = comparisonString.charAt(0);
+        int comparisonVal = 0;
+        String comparisonStringVal = comparisonString.substring(1);
+        if(comparisonStringVal.length()>0) {
+            comparisonVal = Integer.valueOf(comparisonStringVal).intValue();
+        }
+        switch(comparisonFunc) {
+            case '>':
+                return tag.size()>comparisonVal;
+            case '=':
+                return tag.size()==comparisonVal;
+            case '<':
+                return tag.size()<comparisonVal;
+            case '~':
+                return tag.size()!=comparisonVal;
+            case '*':
+                return tag.size()>0;
+        }
+        return false;
+    }
+    boolean stringNumericFuncCompare(String comparisonString, double tag){
+        char comparisonFunc = comparisonString.charAt(0);
+        float comparisonVal = 0;
+        String comparisonStringVal = comparisonString.substring(1);
+        if(comparisonStringVal.length()>0) {
+            comparisonVal = Float.valueOf(comparisonStringVal).floatValue();
+        }
+        switch(comparisonFunc) {
+            case '>':
+                return tag>comparisonVal;
+            case '=':
+                return tag==comparisonVal;
+            case '<':
+                return tag<comparisonVal;
+            case '~':
+                return tag!=comparisonVal;
+            case '*':
+                return tag>0;
+        }
+        return false;
+    }
+    public boolean deepFuzzyCompare(Tag filterTag, Tag stackTag) {
+        if(filterTag == null)
+            return false;
+        if (filterTag instanceof CompoundTag) {
+            if (!(stackTag instanceof CompoundTag)) {
                 return false;
             }
-            CompoundTag c = (CompoundTag) meta;
-            CompoundTag i = (CompoundTag) item;
-            for (String key : c.getAllKeys()) {
-                Tag nbt = c.get(key);
-                if (i.contains(key, nbt.getId())) {
-                    if (!deepFuzzyCompare(nbt, i.get(key))) {
+            CompoundTag metaCompound = (CompoundTag) filterTag;
+            CompoundTag itemCompound = (CompoundTag) stackTag;
+            for (String key : metaCompound.getAllKeys()) {
+                Tag nbt = metaCompound.get(key);
+                if (itemCompound.contains(key, nbt.getId())) {
+                    if (!deepFuzzyCompare(nbt, itemCompound.get(key))) {
                         return false;
                     }
                 } else {
@@ -124,15 +168,32 @@ public abstract class PipeType<T> {
                 }
             }
             return true;
-        } else if (meta instanceof ListTag) {
-            ListTag l = (ListTag) meta;
-            if (!(item instanceof ListTag)) {
+
+        } else if (stackTag instanceof ListTag && filterTag instanceof NumericTag) {
+            ListTag stackList = (ListTag) stackTag;
+            NumericTag filterInt = (NumericTag) filterTag;
+            return stackList.size() == filterInt.getAsInt();
+
+        } else if (stackTag instanceof ListTag && filterTag instanceof StringTag) {
+            ListTag stackList = (ListTag) stackTag;
+            return stringListFuncCompare(filterTag.getAsString(), stackList);
+
+        } else if (filterTag instanceof ListTag && stackTag instanceof ListTag){
+            ListTag filterList = (ListTag) filterTag;
+            ListTag stackList = (ListTag) stackTag;
+            if(filterList.size()==0)
                 return false;
-            }
-            ListTag il = (ListTag) item;
-            return l.stream().allMatch(inbt -> il.stream().anyMatch(inbt1 -> deepFuzzyCompare(inbt, inbt1)));
-        } else {
-            return meta != null && meta.equals(item);
+            return filterList.stream().allMatch(inbt -> stackList.stream().anyMatch(inbt1 -> deepFuzzyCompare(inbt, inbt1)));
+
+        }else if (stackTag instanceof NumericTag && filterTag instanceof StringTag) {
+            return stringNumericFuncCompare(filterTag.getAsString(), ((NumericTag) stackTag).getAsFloat());
+
+        } else if ((stackTag instanceof NumericTag || stackTag instanceof StringTag) && filterTag instanceof ListTag) { // match any
+            ListTag tags = (ListTag) stackTag;
+            return tags.stream().anyMatch(c -> deepFuzzyCompare(stackTag, c));
+
+        }else{ // both are equal
+            return filterTag.equals(stackTag);
         }
     }
 
@@ -143,7 +204,7 @@ public abstract class PipeType<T> {
                 count++;
             }
         }
-        return count;
+    return count;
     }
 
 }

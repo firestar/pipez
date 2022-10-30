@@ -1,15 +1,13 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.maxhenkel.de/repository/public' }
+        maven { url = 'https://nexus.mcbans.com/repository/modded_mc/'}
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'de.maxhenkel.forge-update', name: 'forge-update', version: '1.0.4'
     }
 }
-
 plugins {
     // https://github.com/matthewprenger/CurseGradle
     id "com.matthewprenger.cursegradle" version "1.4.0"
@@ -17,7 +15,6 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'forge-update'
 apply plugin: 'idea'
 
 idea {
@@ -76,6 +73,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     mavenLocal()
+    maven { url = 'https://nexus.mcbans.com/repository/modded_mc/'}
     maven {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
@@ -83,10 +81,6 @@ repositories {
     maven {
         name = "ModMaven"
         url = "https://modmaven.dev"
-    }
-    maven {
-        name = "henkelmax.public"
-        url = 'https://maven.maxhenkel.de/repository/public'
     }
     maven {
         name 'tterrag maven'
@@ -150,58 +144,6 @@ processResources {
     }
 }
 
-curseforge {
-    def apiKeyFile = file('curseforge_api_key.txt')
-    if (System.env.CURSEFORGE_API_KEY != null) {
-        apiKey = System.env.CURSEFORGE_API_KEY;
-    } else if (apiKeyFile.exists()) {
-        apiKey = apiKeyFile.text
-    } else {
-        apiKey = ""
-    }
-    project {
-        id = curse_id
-        changelogType = 'markdown'
-        changelog = file('changelog.md')
-        releaseType = curse_release_type
-        addGameVersion mod_minecraft_version
-        addGameVersion 'Forge'
-        addGameVersion 'Java 17'
-        mainArtifact(jar) {
-            displayName = "[${mod_minecraft_version}] ${mod_name} ${mod_version}"
-            relations {
-                optionalDependency 'jei'
-                optionalDependency 'the-one-probe'
-                optionalDependency 'jade'
-                optionalDependency 'mekanism'
-            }
-        }
-    }
-}
-
-forgeUpdate {
-    def messages = []
-    file('changelog.md').eachLine { String line ->
-        if (line.trim().startsWith('-')) {
-            messages.add(line.replaceFirst('-', '').trim())
-        }
-    }
-    def apiKeyFile = file('forge_update_api_key.txt')
-    if (System.env.FORGE_UPDATE_API_KEY != null) {
-        apiKey = System.env.FORGE_UPDATE_API_KEY;
-    } else if (apiKeyFile.exists()) {
-        apiKey = apiKeyFile.text
-    } else {
-        apiKey = ""
-    }
-    serverURL = 'https://update.maxhenkel.de/'
-    modID = mod_id
-    gameVersion = mod_minecraft_version
-    modVersion = mod_version
-    updateMessages = messages
-    releaseType = curse_release_type
-    tags = recommended == 'true' ? ['recommended'] : []
-}
 
 javadoc {
     failOnError = false
