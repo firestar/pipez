@@ -98,6 +98,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'junit:junit:4.13.1'
     minecraft "net.minecraftforge:forge:${mod_minecraft_version}-${forge_version}"
 
     compileOnly fg.deobf("mezz.jei:jei-${jei_mc_version}:${jei_version}:api")

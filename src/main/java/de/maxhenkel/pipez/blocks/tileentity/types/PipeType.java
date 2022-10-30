@@ -155,20 +155,14 @@ public abstract class PipeType<T> {
             if (!(stackTag instanceof CompoundTag)) {
                 return false;
             }
-            CompoundTag metaCompound = (CompoundTag) filterTag;
+            CompoundTag filterCompound = (CompoundTag) filterTag;
             CompoundTag itemCompound = (CompoundTag) stackTag;
-            for (String key : metaCompound.getAllKeys()) {
-                Tag nbt = metaCompound.get(key);
-                if (itemCompound.contains(key, nbt.getId())) {
-                    if (!deepFuzzyCompare(nbt, itemCompound.get(key))) {
-                        return false;
-                    }
-                } else {
-                    return false;
+            return filterCompound.getAllKeys().stream().allMatch(key->{
+                if(itemCompound.contains(key)){
+                    return deepFuzzyCompare(filterCompound.get(key), itemCompound.get(key));
                 }
-            }
-            return true;
-
+                return false;
+            });
         } else if (stackTag instanceof ListTag && filterTag instanceof NumericTag) {
             ListTag stackList = (ListTag) stackTag;
             NumericTag filterInt = (NumericTag) filterTag;
