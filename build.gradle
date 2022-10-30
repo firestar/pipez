@@ -12,6 +12,7 @@ plugins {
     // https://github.com/matthewprenger/CurseGradle
     id "com.matthewprenger.cursegradle" version "1.4.0"
     id "com.github.johnrengelman.shadow" version "7.1.0"
+    id 'maven-publish'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -203,11 +204,14 @@ publishing {
 
             artifact jar
             artifact javadocJar
-            archives deobfJar
         }
     }
     repositories {
         maven {
+            credentials {
+                username = "jenkins"
+                password = "$System.env.jenkins_password"
+            }
             name = 'henkelmax.public'
             url = 'https://nexus.mcbans.com/repository/modded_mc/'
         }
