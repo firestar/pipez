@@ -2,7 +2,7 @@ buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://nexus.mcbans.com/repository/modded_mc/'}
-        mavenCentral()
+        maven { url = 'https://nexus.mcbans.com/repository/maven-public/' }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
@@ -73,21 +73,22 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     mavenLocal()
+    maven { url = 'https://nexus.mcbans.com/repository/maven-public/' }
     maven { url = 'https://nexus.mcbans.com/repository/modded_mc/'}
     maven {
         name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
+        url = "https://nexus.mcbans.com/repository/Progwml6/"
     }
     maven {
         name = "ModMaven"
-        url = "https://modmaven.dev"
+        url = "https://nexus.mcbans.com/repository/ModHaven/"
     }
     maven {
         name 'tterrag maven'
-        url "https://maven.tterrag.com/"
+        url "https://nexus.mcbans.com/repository/tterrag/"
     }
     maven {
-        url "https://www.cursemaven.com"
+        url "https://nexus.mcbans.com/repository/curse/"
         content {
             includeGroup "curse.maven"
         }
