@@ -186,7 +186,7 @@ public abstract class PipeType<T> {
                         }
                     default:
                         if(itemCompound.contains(key)){
-                            return deepFuzzyCompare(, itemCompound.get(key));
+                            return deepFuzzyCompare(filterMatchOnKey, itemCompound.get(key));
                         }
                 }
                 return false;
