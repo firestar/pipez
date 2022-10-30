@@ -158,8 +158,36 @@ public abstract class PipeType<T> {
             CompoundTag filterCompound = (CompoundTag) filterTag;
             CompoundTag itemCompound = (CompoundTag) stackTag;
             return filterCompound.getAllKeys().stream().allMatch(key->{
-                if(itemCompound.contains(key)){
-                    return deepFuzzyCompare(filterCompound.get(key), itemCompound.get(key));
+                Tag filterMatchOnKey = filterCompound.get(key);
+                switch (key){
+                    case "pze":
+                        if(filterMatchOnKey instanceof ListTag) {
+                            ListTag filterMatchOnKeyList = (ListTag) filterMatchOnKey;
+                            return filterMatchOnKeyList.stream().allMatch(filterMatchOnKeyListItem -> {
+                                if (filterMatchOnKeyListItem instanceof StringTag)
+                                    return itemCompound.contains(filterMatchOnKeyListItem.getAsString());
+                                return false;
+                            });
+                        }else if(filterMatchOnKey instanceof StringTag){
+                            StringTag filterMatchOnKeyString = (StringTag) filterMatchOnKey;
+                            return itemCompound.contains(filterMatchOnKeyString.getAsString());
+                        }
+                    case "pzne":
+                        if(filterMatchOnKey instanceof ListTag) {
+                            ListTag filterMatchOnKeyList = (ListTag) filterMatchOnKey;
+                            return !filterMatchOnKeyList.stream().allMatch(filterMatchOnKeyListItem -> {
+                                if (filterMatchOnKeyListItem instanceof StringTag)
+                                    return itemCompound.contains(filterMatchOnKeyListItem.getAsString());
+                                return false;
+                            });
+                        }else if(filterMatchOnKey instanceof StringTag){
+                            StringTag filterMatchOnKeyString = (StringTag) filterMatchOnKey;
+                            return !itemCompound.contains(filterMatchOnKeyString.getAsString());
+                        }
+                    default:
+                        if(itemCompound.contains(key)){
+                            return deepFuzzyCompare(, itemCompound.get(key));
+                        }
                 }
                 return false;
             });
@@ -167,7 +195,6 @@ public abstract class PipeType<T> {
             ListTag stackList = (ListTag) stackTag;
             NumericTag filterInt = (NumericTag) filterTag;
             return stackList.size() == filterInt.getAsInt();
-
         } else if (stackTag instanceof ListTag && filterTag instanceof StringTag) {
             ListTag stackList = (ListTag) stackTag;
             return stringListFuncCompare(filterTag.getAsString(), stackList);
