@@ -1,8 +1,8 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://nexus.mcbans.com/repository/minecraft-forge/' }
         maven { url = 'https://nexus.mcbans.com/repository/modded_mc/'}
-        maven { url = 'https://nexus.mcbans.com/repository/maven-public/' }
+        maven { url = 'https://nexus.mcbans.com/repository/maven-central/' }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
@@ -73,7 +73,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     mavenLocal()
-    maven { url = 'https://nexus.mcbans.com/repository/maven-public/' }
+    maven { url = 'https://nexus.mcbans.com/repository/maven-central/' }
     maven { url = 'https://nexus.mcbans.com/repository/modded_mc/'}
     maven {
         name = "Progwml6 maven"
