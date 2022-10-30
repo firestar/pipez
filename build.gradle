@@ -16,6 +16,7 @@ plugins {
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'idea'
+apply plugin: 'maven-publish'
 
 idea {
     module {
@@ -192,4 +193,23 @@ shadowJar {
 
 reobf {
     shadowJar {}
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = mod_packagename
+            artifactId = mod_id
+            version = mod_version
+
+            artifact jar
+            artifact javadocJar
+            archives deobfJar
+        }
+    }
+    repositories {
+        maven {
+            name = 'henkelmax.public'
+            url = 'https://nexus.mcbans.com/repository/modded_mc/'
+        }
+    }
 }
