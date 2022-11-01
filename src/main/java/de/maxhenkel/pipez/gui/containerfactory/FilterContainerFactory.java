@@ -1,6 +1,6 @@
 package de.maxhenkel.pipez.gui.containerfactory;
 
-import de.maxhenkel.pipez.Filter;
+import de.maxhenkel.pipez.filters.Filter;
 import de.maxhenkel.pipez.blocks.tileentity.PipeLogicTileEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;

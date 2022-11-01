@@ -1,7 +1,7 @@
 package de.maxhenkel.pipez.blocks.tileentity.types;
 
-import de.maxhenkel.pipez.Filter;
-import de.maxhenkel.pipez.FluidFilter;
+import de.maxhenkel.pipez.filters.Filter;
+import de.maxhenkel.pipez.filters.FluidFilter;
 import de.maxhenkel.pipez.Main;
 import de.maxhenkel.pipez.Upgrade;
 import de.maxhenkel.pipez.blocks.ModBlocks;

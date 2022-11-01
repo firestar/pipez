@@ -2,7 +2,7 @@ package de.maxhenkel.pipez.blocks.tileentity.types;
 
 import de.maxhenkel.corelib.energy.EnergyUtils;
 import de.maxhenkel.corelib.helpers.Pair;
-import de.maxhenkel.pipez.Filter;
+import de.maxhenkel.pipez.filters.Filter;
 import de.maxhenkel.pipez.Main;
 import de.maxhenkel.pipez.Upgrade;
 import de.maxhenkel.pipez.blocks.ModBlocks;

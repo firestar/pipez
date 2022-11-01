@@ -1,6 +1,6 @@
 package de.maxhenkel.pipez.blocks.tileentity.configuration;
 
-import de.maxhenkel.pipez.Filter;
+import de.maxhenkel.pipez.filters.Filter;
 import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ListTag;

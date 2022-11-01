@@ -1,7 +1,7 @@
 package de.maxhenkel.pipez.net;
 
 import de.maxhenkel.corelib.net.Message;
-import de.maxhenkel.pipez.Filter;
+import de.maxhenkel.pipez.filters.Filter;
 import de.maxhenkel.pipez.gui.ExtractContainer;
 import de.maxhenkel.pipez.gui.FilterContainer;
 import de.maxhenkel.pipez.gui.containerfactory.FilterContainerProvider;

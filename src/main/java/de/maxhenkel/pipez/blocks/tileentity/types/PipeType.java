@@ -1,7 +1,7 @@
 package de.maxhenkel.pipez.blocks.tileentity.types;
 
 import de.maxhenkel.pipez.DirectionalPosition;
-import de.maxhenkel.pipez.Filter;
+import de.maxhenkel.pipez.filters.Filter;
 import de.maxhenkel.pipez.Upgrade;
 import de.maxhenkel.pipez.blocks.tileentity.PipeLogicTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public abstract class PipeType<T> {
@@ -150,7 +149,7 @@ public abstract class PipeType<T> {
     }
     public boolean deepFuzzyCompare(Tag filterTag, Tag stackTag) {
         if(filterTag == null)
-            return false;
+            return true;
         if (filterTag instanceof CompoundTag) {
             if (!(stackTag instanceof CompoundTag)) {
                 return false;
@@ -211,7 +210,7 @@ public abstract class PipeType<T> {
         } else if ((stackTag instanceof NumericTag || stackTag instanceof StringTag) && filterTag instanceof ListTag) { // match any
             ListTag tags = (ListTag) stackTag;
             return tags.stream().anyMatch(c -> deepFuzzyCompare(stackTag, c));
-        }else{ // both are equal
+        }else{ // both are the same type
             return filterTag.equals(stackTag);
         }
     }

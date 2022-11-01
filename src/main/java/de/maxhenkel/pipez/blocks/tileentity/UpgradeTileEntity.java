@@ -2,7 +2,7 @@ package de.maxhenkel.pipez.blocks.tileentity;
 
 import de.maxhenkel.corelib.inventory.ItemListInventory;
 import de.maxhenkel.corelib.item.ItemUtils;
-import de.maxhenkel.pipez.Filter;
+import de.maxhenkel.pipez.filters.Filter;
 import de.maxhenkel.pipez.Upgrade;
 import de.maxhenkel.pipez.blocks.tileentity.configuration.DistributionCache;
 import de.maxhenkel.pipez.blocks.tileentity.configuration.FilterCache;

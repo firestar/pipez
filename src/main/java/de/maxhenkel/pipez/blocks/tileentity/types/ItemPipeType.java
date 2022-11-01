@@ -1,8 +1,8 @@
 package de.maxhenkel.pipez.blocks.tileentity.types;
 
 import de.maxhenkel.corelib.item.ItemUtils;
-import de.maxhenkel.pipez.Filter;
-import de.maxhenkel.pipez.ItemFilter;
+import de.maxhenkel.pipez.filters.Filter;
+import de.maxhenkel.pipez.filters.ItemFilter;
 import de.maxhenkel.pipez.Main;
 import de.maxhenkel.pipez.Upgrade;
 import de.maxhenkel.pipez.blocks.ModBlocks;
@@ -215,10 +215,10 @@ public class ItemPipeType extends PipeType<Item> {
             if (stackNBT == null) {
                 return metadata.size() <= 0;
             }
-            if (!deepFuzzyCompare(metadata, stackNBT)) {
-                return false;
+            if(filter.getTag() == null || filter.getTag().contains(stack.getItem())){
+
             }
-            return filter.getTag() == null || filter.getTag().contains(stack.getItem());
+            return deepFuzzyCompare(metadata, stackNBT);
         }
     }
 

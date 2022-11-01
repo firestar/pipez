@@ -1,7 +1,7 @@
 package de.maxhenkel.pipez.gui;
 
 import de.maxhenkel.corelib.inventory.ContainerBase;
-import de.maxhenkel.pipez.Filter;
+import de.maxhenkel.pipez.filters.Filter;
 import de.maxhenkel.pipez.blocks.tileentity.PipeLogicTileEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;

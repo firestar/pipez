@@ -1,6 +1,7 @@
-package de.maxhenkel.pipez;
+package de.maxhenkel.pipez.filters;
 
 import de.maxhenkel.corelib.tag.SingleElementTag;
+import de.maxhenkel.pipez.DirectionalPosition;
 import de.maxhenkel.pipez.utils.GasUtils;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.gas.Gas;
