@@ -202,12 +202,26 @@ public class ItemPipeType extends PipeType<Item> {
     private boolean matches(Filter<Item> filter, ItemStack stack) {
         CompoundTag metadata = filter.getMetadata();
         if (metadata == null) {
-            return filter.getTag() == null || filter.getTag().contains(stack.getItem());
+            boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
+            System.out.println("==========================================");
+            System.out.println("no match run, now checking item: "+result);
+            System.out.println(filter.getTag().toString());
+            System.out.println(stack.getItem());
+            return result;
         }
         if (filter.isExactMetadata()) {
             if (deepExactCompare(metadata, stack.getTag())) {
-                return filter.getTag() == null || filter.getTag().contains(stack.getItem());
+                boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
+                System.out.println("==========================================");
+                System.out.println("exact match passed for exact compare, now checking item: "+result);
+                System.out.println(filter.getTag().toString());
+                System.out.println(stack.getItem());
+                return result;
             } else {
+                System.out.println("==========================================");
+                System.out.println("exact match failed for exact compare.");
+                System.out.println(filter.getTag().toString());
+                System.out.println(stack.getItem());
                 return false;
             }
         } else {
@@ -215,10 +229,19 @@ public class ItemPipeType extends PipeType<Item> {
             if (stackNBT == null) {
                 return metadata.size() <= 0;
             }
-            if(filter.getTag() == null || filter.getTag().contains(stack.getItem())){
-
+            if (!deepFuzzyCompare(metadata, stackNBT)) {
+                System.out.println("==========================================");
+                System.out.println("deep fuzzy match failed, now checking item");
+                System.out.println(filter.getTag().toString());
+                System.out.println(stack.getItem());
+                return false;
             }
-            return deepFuzzyCompare(metadata, stackNBT);
+            boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
+            System.out.println("==========================================");
+            System.out.println("deep fuzzy match success, now checking item: "+result);
+            System.out.println(filter.getTag().toString());
+            System.out.println(stack.getItem());
+            return result;
         }
     }
 

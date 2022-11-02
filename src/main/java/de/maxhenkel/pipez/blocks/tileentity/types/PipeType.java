@@ -148,8 +148,6 @@ public abstract class PipeType<T> {
         return false;
     }
     public boolean deepFuzzyCompare(Tag filterTag, Tag stackTag) {
-        if(filterTag == null)
-            return true;
         if (filterTag instanceof CompoundTag) {
             if (!(stackTag instanceof CompoundTag)) {
                 return false;
