@@ -105,11 +105,12 @@ public class ItemPipeType extends PipeType<Item> {
             boolean hasInserted = false;
             if (destination != null && !inventoriesFull[p] && !isFull(destination)) {
                 for (int j = 0; j < itemHandler.getSlots(); j++) {
-                    System.out.println("=====================================");
+
                     ItemStack simulatedExtract = itemHandler.extractItem(j, 1, true);
                     if (simulatedExtract.isEmpty()) {
                         continue;
                     }
+                    System.out.println("=====================================");
                     if (canInsert(connection, simulatedExtract, tileEntity.getFilters(side, this)) == tileEntity.getFilterMode(side, this).equals(UpgradeTileEntity.FilterMode.BLACKLIST)) {
                         continue;
                     }
@@ -152,11 +153,11 @@ public class ItemPipeType extends PipeType<Item> {
                 if (itemsToTransfer <= 0) {
                     break connectionLoop;
                 }
-                System.out.println("=====================================");
                 ItemStack simulatedExtract = itemHandler.extractItem(i, itemsToTransfer, true);
                 if (simulatedExtract.isEmpty()) {
                     continue;
                 }
+                System.out.println("=====================================");
                 if (nonFittingItems.stream().anyMatch(stack -> ItemUtils.isStackable(stack, simulatedExtract))) {
                     continue;
                 }
