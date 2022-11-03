@@ -216,7 +216,6 @@ public class ItemPipeType extends PipeType<Item> {
         if (metadata == null) {
             boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
             System.out.println("no match run, now checking item: "+result);
-            System.out.println(filter.getTag().toString());
             System.out.println(stack.getItem());
             return result;
         }
@@ -224,12 +223,10 @@ public class ItemPipeType extends PipeType<Item> {
             if (deepExactCompare(metadata, stack.getTag())) {
                 boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
                 System.out.println("exact match passed for exact compare, now checking item: "+result);
-                System.out.println(filter.getTag().toString());
                 System.out.println(stack.getItem());
                 return result;
             } else {
                 System.out.println("exact match failed for exact compare.");
-                System.out.println(filter.getTag().toString());
                 System.out.println(stack.getItem());
                 return false;
             }
@@ -240,13 +237,11 @@ public class ItemPipeType extends PipeType<Item> {
             }
             if (!deepFuzzyCompare(metadata, stackNBT)) {
                 System.out.println("deep fuzzy match failed, now checking item");
-                System.out.println(filter.getTag().toString());
                 System.out.println(stack.getItem());
                 return false;
             }
             boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
             System.out.println("deep fuzzy match success, now checking item: "+result);
-            System.out.println(filter.getTag().toString());
             System.out.println(stack.getItem());
             return result;
         }
