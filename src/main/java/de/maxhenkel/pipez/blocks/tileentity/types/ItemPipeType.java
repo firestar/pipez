@@ -161,6 +161,7 @@ public class ItemPipeType extends PipeType<Item> {
                     continue;
                 }
                 if (canInsert(connection, simulatedExtract, tileEntity.getFilters(side, this)) == tileEntity.getFilterMode(side, this).equals(UpgradeTileEntity.FilterMode.BLACKLIST)) {
+                    System.out.println("skipping: "+destination);
                     continue;
                 }
                 System.out.println("destination: "+destination);
