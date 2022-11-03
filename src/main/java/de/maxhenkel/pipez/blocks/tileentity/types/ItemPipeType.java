@@ -114,10 +114,13 @@ public class ItemPipeType extends PipeType<Item> {
                     System.out.println("=====================================");
                     System.out.println(connection.getPos().toString());
                     if (canInsert(connection, simulatedExtract, tileEntity.getFilters(side, this)) == tileEntity.getFilterMode(side, this).equals(UpgradeTileEntity.FilterMode.BLACKLIST)) {
+                        System.out.println("skipping: "+connection.getPos());
                         continue;
                     }
+
                     ItemStack stack = ItemHandlerHelper.insertItem(destination, simulatedExtract, false);
                     int insertedAmount = simulatedExtract.getCount() - stack.getCount();
+                    System.out.println("sending "+insertedAmount+" "+stack.getItem().getRegistryName()+" to: "+connection.getPos());
                     if (insertedAmount > 0) {
                         itemsToTransfer -= insertedAmount;
                         itemHandler.extractItem(j, insertedAmount, false);
@@ -164,12 +167,13 @@ public class ItemPipeType extends PipeType<Item> {
                     continue;
                 }
                 if (canInsert(connection, simulatedExtract, tileEntity.getFilters(side, this)) == tileEntity.getFilterMode(side, this).equals(UpgradeTileEntity.FilterMode.BLACKLIST)) {
-                    System.out.println("skipping: "+destination);
+                    System.out.println("skipping: "+connection.getPos());
                     continue;
                 }
-                System.out.println("destination: "+destination);
+                System.out.println("sending to: "+connection.getPos());
                 ItemStack stack = ItemHandlerHelper.insertItem(destination, simulatedExtract, false);
                 int insertedAmount = simulatedExtract.getCount() - stack.getCount();
+                System.out.println("sending "+insertedAmount+" "+stack.getItem().getRegistryName()+" to: "+connection.getPos());
                 if (insertedAmount <= 0) {
                     nonFittingItems.add(simulatedExtract);
                 }
