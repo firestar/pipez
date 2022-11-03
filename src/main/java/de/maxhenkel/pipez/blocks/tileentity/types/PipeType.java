@@ -114,6 +114,8 @@ public abstract class PipeType<T> {
 
 
     boolean stringListFuncCompare(String comparisonString, ListTag tag){
+        if(comparisonString.equals("empty"))
+            return false;
         char comparisonFunc = comparisonString.charAt(0);
         int comparisonVal = 0;
         String comparisonStringVal = comparisonString.substring(1);
@@ -135,6 +137,8 @@ public abstract class PipeType<T> {
         return false;
     }
     boolean stringNumericFuncCompare(String comparisonString, double tag){
+        if(comparisonString.equals("empty"))
+            return false;
         char comparisonFunc = comparisonString.charAt(0);
         float comparisonVal = 0;
         String comparisonStringVal = comparisonString.substring(1);
