@@ -56,9 +56,12 @@ public abstract class PipeType<T> {
 
     public boolean matchesConnection(PipeTileEntity.Connection connection, Filter<T> filter) {
         if (filter.getDestination() == null) {
+            System.out.println("matched destination: true");
             return true;
         }
-        return filter.getDestination().equals(new DirectionalPosition(connection.getPos(), connection.getDirection()));
+        boolean destination = filter.getDestination().equals(new DirectionalPosition(connection.getPos(), connection.getDirection()));
+        System.out.println("matched destination: "+destination);
+        return destination;
     }
 
     public boolean deepExactCompare(Tag meta, Tag item) {

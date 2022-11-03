@@ -105,6 +105,7 @@ public class ItemPipeType extends PipeType<Item> {
             boolean hasInserted = false;
             if (destination != null && !inventoriesFull[p] && !isFull(destination)) {
                 for (int j = 0; j < itemHandler.getSlots(); j++) {
+                    System.out.println("=====================================");
                     ItemStack simulatedExtract = itemHandler.extractItem(j, 1, true);
                     if (simulatedExtract.isEmpty()) {
                         continue;
@@ -134,6 +135,7 @@ public class ItemPipeType extends PipeType<Item> {
     protected void insertOrdered(PipeLogicTileEntity tileEntity, Direction side, List<PipeTileEntity.Connection> connections, IItemHandler itemHandler) {
         int itemsToTransfer = getRate(tileEntity, side);
 
+        System.out.println("Using ordered insert.");
         ArrayList<ItemStack> nonFittingItems = new ArrayList<>();
 
         connectionLoop:
@@ -150,6 +152,7 @@ public class ItemPipeType extends PipeType<Item> {
                 if (itemsToTransfer <= 0) {
                     break connectionLoop;
                 }
+                System.out.println("=====================================");
                 ItemStack simulatedExtract = itemHandler.extractItem(i, itemsToTransfer, true);
                 if (simulatedExtract.isEmpty()) {
                     continue;
@@ -175,35 +178,36 @@ public class ItemPipeType extends PipeType<Item> {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack stackInSlot = itemHandler.getStackInSlot(i);
             if (stackInSlot.getCount() < itemHandler.getSlotLimit(i)) {
+                System.out.println("storage has room");
                 return false;
             }
         }
+        System.out.println("storage full");
         return true;
     }
 
     private boolean canInsert(PipeTileEntity.Connection connection, ItemStack stack, List<Filter<?>> filters) {
         for (Filter<Item> filter : filters.stream().map(filter -> (Filter<Item>) filter).filter(Filter::isInvert).filter(f -> matchesConnection(connection, f)).collect(Collectors.toList())) {
             if (matches(filter, stack)) {
+                System.out.println("can Insert?: false");
                 return false;
             }
         }
         List<Filter<Item>> collect = filters.stream().map(filter -> (Filter<Item>) filter).filter(f -> !f.isInvert()).filter(f -> matchesConnection(connection, f)).collect(Collectors.toList());
         if (collect.isEmpty()) {
+            System.out.println("can Insert?: true");
             return true;
         }
-        for (Filter<Item> filter : collect) {
-            if (matches(filter, stack)) {
-                return true;
-            }
-        }
-        return false;
+
+        boolean matchesAny = collect.stream().anyMatch(filter -> matches(filter, stack));
+        System.out.println("can Insert?: "+matchesAny);
+        return matchesAny;
     }
 
     private boolean matches(Filter<Item> filter, ItemStack stack) {
         CompoundTag metadata = filter.getMetadata();
         if (metadata == null) {
             boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
-            System.out.println("==========================================");
             System.out.println("no match run, now checking item: "+result);
             System.out.println(filter.getTag().toString());
             System.out.println(stack.getItem());
@@ -212,13 +216,11 @@ public class ItemPipeType extends PipeType<Item> {
         if (filter.isExactMetadata()) {
             if (deepExactCompare(metadata, stack.getTag())) {
                 boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
-                System.out.println("==========================================");
                 System.out.println("exact match passed for exact compare, now checking item: "+result);
                 System.out.println(filter.getTag().toString());
                 System.out.println(stack.getItem());
                 return result;
             } else {
-                System.out.println("==========================================");
                 System.out.println("exact match failed for exact compare.");
                 System.out.println(filter.getTag().toString());
                 System.out.println(stack.getItem());
@@ -230,14 +232,12 @@ public class ItemPipeType extends PipeType<Item> {
                 return metadata.size() <= 0;
             }
             if (!deepFuzzyCompare(metadata, stackNBT)) {
-                System.out.println("==========================================");
                 System.out.println("deep fuzzy match failed, now checking item");
                 System.out.println(filter.getTag().toString());
                 System.out.println(stack.getItem());
                 return false;
             }
             boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
-            System.out.println("==========================================");
             System.out.println("deep fuzzy match success, now checking item: "+result);
             System.out.println(filter.getTag().toString());
             System.out.println(stack.getItem());
