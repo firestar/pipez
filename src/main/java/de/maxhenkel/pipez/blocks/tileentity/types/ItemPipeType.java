@@ -163,6 +163,7 @@ public class ItemPipeType extends PipeType<Item> {
                 if (canInsert(connection, simulatedExtract, tileEntity.getFilters(side, this)) == tileEntity.getFilterMode(side, this).equals(UpgradeTileEntity.FilterMode.BLACKLIST)) {
                     continue;
                 }
+                System.out.println("destination: "+destination);
                 ItemStack stack = ItemHandlerHelper.insertItem(destination, simulatedExtract, false);
                 int insertedAmount = simulatedExtract.getCount() - stack.getCount();
                 if (insertedAmount <= 0) {
