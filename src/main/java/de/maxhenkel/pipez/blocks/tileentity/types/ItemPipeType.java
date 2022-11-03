@@ -101,6 +101,7 @@ public class ItemPipeType extends PipeType<Item> {
         int p = tileEntity.getRoundRobinIndex(side, this) % connections.size();
         while (itemsToTransfer > 0 && hasNotInserted(inventoriesFull)) {
             PipeTileEntity.Connection connection = connections.get(p);
+
             IItemHandler destination = getItemHandler(tileEntity, connection.getPos(), connection.getDirection());
             boolean hasInserted = false;
             if (destination != null && !inventoriesFull[p] && !isFull(destination)) {
@@ -111,6 +112,7 @@ public class ItemPipeType extends PipeType<Item> {
                         continue;
                     }
                     System.out.println("=====================================");
+                    System.out.println(connection.getPos().toString());
                     if (canInsert(connection, simulatedExtract, tileEntity.getFilters(side, this)) == tileEntity.getFilterMode(side, this).equals(UpgradeTileEntity.FilterMode.BLACKLIST)) {
                         continue;
                     }
@@ -136,7 +138,6 @@ public class ItemPipeType extends PipeType<Item> {
     protected void insertOrdered(PipeLogicTileEntity tileEntity, Direction side, List<PipeTileEntity.Connection> connections, IItemHandler itemHandler) {
         int itemsToTransfer = getRate(tileEntity, side);
 
-        System.out.println("Using ordered insert.");
         ArrayList<ItemStack> nonFittingItems = new ArrayList<>();
 
         connectionLoop:
@@ -158,6 +159,7 @@ public class ItemPipeType extends PipeType<Item> {
                     continue;
                 }
                 System.out.println("=====================================");
+                System.out.println(connection.getPos().toString());
                 if (nonFittingItems.stream().anyMatch(stack -> ItemUtils.isStackable(stack, simulatedExtract))) {
                     continue;
                 }
@@ -181,11 +183,9 @@ public class ItemPipeType extends PipeType<Item> {
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack stackInSlot = itemHandler.getStackInSlot(i);
             if (stackInSlot.getCount() < itemHandler.getSlotLimit(i)) {
-                System.out.println("storage has room");
                 return false;
             }
         }
-        System.out.println("storage full");
         return true;
     }
 
