@@ -232,9 +232,9 @@ public class ItemPipeType extends PipeType<Item> {
             }
         } else {
             CompoundTag stackNBT = stack.getTag();
-            if (stackNBT == null) {
-                return metadata.size() <= 0;
-            }
+//            if (stackNBT == null) {
+//                return metadata.size() <= 0;
+//            }
             if (!deepFuzzyCompare(metadata, stackNBT)) {
                 System.out.println("deep fuzzy match failed, now checking item");
                 System.out.println(stack.getItem());

@@ -59,13 +59,13 @@ public abstract class PipeType<T> {
             System.out.println("no destination set, skipping");
             return true;
         }
-        System.out.println(filter.getDestination().getPos()+" == "+connection.getPos());
-        System.out.println(filter.getDestination().getDirection().getName()+" == "+connection.getDirection().getName());
-        System.out.println(filter.getDestination().getDirection().getStepX()+" == "+connection.getDirection().getStepX());
-        System.out.println(filter.getDestination().getDirection().getStepY()+" == "+connection.getDirection().getStepY());
-        System.out.println(filter.getDestination().getDirection().getStepZ()+" == "+connection.getDirection().getStepZ());
+        System.out.println(filter.getDestination().getPos() + " == " + connection.getPos());
+        System.out.println(filter.getDestination().getDirection().getName() + " == " + connection.getDirection().getName());
+        System.out.println(filter.getDestination().getDirection().getStepX() + " == " + connection.getDirection().getStepX());
+        System.out.println(filter.getDestination().getDirection().getStepY() + " == " + connection.getDirection().getStepY());
+        System.out.println(filter.getDestination().getDirection().getStepZ() + " == " + connection.getDirection().getStepZ());
         boolean destination = filter.getDestination().equals(new DirectionalPosition(connection.getPos(), connection.getDirection()));
-        System.out.println("matched destination: "+destination);
+        System.out.println("matched destination: " + destination);
         return destination;
     }
 
@@ -113,52 +113,55 @@ public abstract class PipeType<T> {
     }
 
 
-    boolean stringListFuncCompare(String comparisonString, ListTag tag){
-        if(comparisonString.equals("empty"))
-            return false;
+    boolean stringListFuncCompare(String comparisonString, ListTag tag) {
+
         char comparisonFunc = comparisonString.charAt(0);
         int comparisonVal = 0;
         String comparisonStringVal = comparisonString.substring(1);
-        if(comparisonStringVal.length()>0) {
+        if(comparisonStringVal.length()>0 && !comparisonStringVal.matches("([0-9.]+)"))
+            return false;
+        if (comparisonStringVal.length() > 0) {
             comparisonVal = Integer.valueOf(comparisonStringVal).intValue();
         }
-        switch(comparisonFunc) {
+        switch (comparisonFunc) {
             case '>':
-                return tag.size()>comparisonVal;
+                return tag.size() > comparisonVal;
             case '=':
-                return tag.size()==comparisonVal;
+                return tag.size() == comparisonVal;
             case '<':
-                return tag.size()<comparisonVal;
+                return tag.size() < comparisonVal;
             case '~':
-                return tag.size()!=comparisonVal;
+                return tag.size() != comparisonVal;
             case '*':
-                return tag.size()>0;
+                return tag.size() > 0;
         }
         return false;
     }
-    boolean stringNumericFuncCompare(String comparisonString, double tag){
-        if(comparisonString.equals("empty"))
-            return false;
+
+    boolean stringNumericFuncCompare(String comparisonString, double tag) {
         char comparisonFunc = comparisonString.charAt(0);
         float comparisonVal = 0;
         String comparisonStringVal = comparisonString.substring(1);
-        if(comparisonStringVal.length()>0) {
+        if(comparisonStringVal.length()>0 && !comparisonStringVal.matches("([0-9.]+)"))
+            return false;
+        if (comparisonStringVal.length() > 0) {
             comparisonVal = Float.valueOf(comparisonStringVal).floatValue();
         }
-        switch(comparisonFunc) {
+        switch (comparisonFunc) {
             case '>':
-                return tag>comparisonVal;
+                return tag > comparisonVal;
             case '=':
-                return tag==comparisonVal;
+                return tag == comparisonVal;
             case '<':
-                return tag<comparisonVal;
+                return tag < comparisonVal;
             case '~':
-                return tag!=comparisonVal;
+                return tag != comparisonVal;
             case '*':
-                return tag>0;
+                return tag > 0;
         }
         return false;
     }
+
     public boolean deepFuzzyCompare(Tag filterTag, Tag stackTag) {
         if (filterTag instanceof CompoundTag) {
             CompoundTag filterCompound = (CompoundTag) filterTag;
@@ -166,9 +169,9 @@ public abstract class PipeType<T> {
                 Tag filterMatchOnKey = filterCompound.get(key);
                 switch (key) {
                     case "pze":
-                        if(stackTag==null)
+                        if (stackTag == null)
                             return false;
-                        if(!(stackTag instanceof CompoundTag))
+                        if (!(stackTag instanceof CompoundTag))
                             return false;
                         CompoundTag itemCompound = (CompoundTag) stackTag;
                         if (filterMatchOnKey instanceof ListTag) {
@@ -184,9 +187,9 @@ public abstract class PipeType<T> {
                         }
                         break;
                     case "pzne":
-                        if(stackTag==null)
+                        if (stackTag == null)
                             return true;
-                        if(!(stackTag instanceof CompoundTag))
+                        if (!(stackTag instanceof CompoundTag))
                             return false;
                         itemCompound = (CompoundTag) stackTag;
                         if (filterMatchOnKey instanceof ListTag) {
@@ -202,7 +205,7 @@ public abstract class PipeType<T> {
                         }
                         break;
                     default:
-                        if(!(stackTag instanceof CompoundTag))
+                        if (!(stackTag instanceof CompoundTag))
                             return false;
                         itemCompound = (CompoundTag) stackTag;
                         if (itemCompound.contains(key)) {
@@ -211,8 +214,6 @@ public abstract class PipeType<T> {
                 }
                 return false;
             });
-        } else if(filterTag instanceof StringTag && stackTag == null){
-            return filterTag.getAsString().equals("empty");
         } else if (stackTag instanceof ListTag && filterTag instanceof NumericTag) {
             ListTag stackList = (ListTag) stackTag;
             NumericTag filterInt = (NumericTag) filterTag;
@@ -220,18 +221,18 @@ public abstract class PipeType<T> {
         } else if (stackTag instanceof ListTag && filterTag instanceof StringTag) {
             ListTag stackList = (ListTag) stackTag;
             return stringListFuncCompare(filterTag.getAsString(), stackList);
-        } else if (filterTag instanceof ListTag && stackTag instanceof ListTag){
+        } else if (filterTag instanceof ListTag && stackTag instanceof ListTag) {
             ListTag filterList = (ListTag) filterTag;
             ListTag stackList = (ListTag) stackTag;
-            if(filterList.size()==0)
+            if (filterList.size() == 0)
                 return false;
             return filterList.stream().allMatch(inbt -> stackList.stream().anyMatch(inbt1 -> deepFuzzyCompare(inbt, inbt1)));
-        }else if (stackTag instanceof NumericTag && filterTag instanceof StringTag) {
+        } else if (stackTag instanceof NumericTag && filterTag instanceof StringTag) {
             return stringNumericFuncCompare(filterTag.getAsString(), ((NumericTag) stackTag).getAsFloat());
         } else if ((stackTag instanceof NumericTag || stackTag instanceof StringTag) && filterTag instanceof ListTag) { // match any
             ListTag tags = (ListTag) stackTag;
             return tags.stream().anyMatch(c -> deepFuzzyCompare(stackTag, c));
-        }else{ // both are the same type
+        } else { // both are the same type
             return filterTag.equals(stackTag);
         }
     }
@@ -243,7 +244,7 @@ public abstract class PipeType<T> {
                 count++;
             }
         }
-    return count;
+        return count;
     }
 
 }
