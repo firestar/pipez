@@ -161,15 +161,16 @@ public abstract class PipeType<T> {
     }
     public boolean deepFuzzyCompare(Tag filterTag, Tag stackTag) {
         if (filterTag instanceof CompoundTag) {
-            if (!(stackTag instanceof CompoundTag)) {
-                return false;
-            }
             CompoundTag filterCompound = (CompoundTag) filterTag;
-            CompoundTag itemCompound = (CompoundTag) stackTag;
             return filterCompound.getAllKeys().stream().allMatch(key -> {
                 Tag filterMatchOnKey = filterCompound.get(key);
                 switch (key) {
                     case "pze":
+                        if(stackTag==null)
+                            return false;
+                        if(!(stackTag instanceof CompoundTag))
+                            return false;
+                        CompoundTag itemCompound = (CompoundTag) stackTag;
                         if (filterMatchOnKey instanceof ListTag) {
                             ListTag filterMatchOnKeyList = (ListTag) filterMatchOnKey;
                             return filterMatchOnKeyList.stream().allMatch(filterMatchOnKeyListItem -> {
@@ -181,7 +182,13 @@ public abstract class PipeType<T> {
                             StringTag filterMatchOnKeyString = (StringTag) filterMatchOnKey;
                             return itemCompound.contains(filterMatchOnKeyString.getAsString());
                         }
+                        break;
                     case "pzne":
+                        if(stackTag==null)
+                            return true;
+                        if(!(stackTag instanceof CompoundTag))
+                            return false;
+                        itemCompound = (CompoundTag) stackTag;
                         if (filterMatchOnKey instanceof ListTag) {
                             ListTag filterMatchOnKeyList = (ListTag) filterMatchOnKey;
                             return !filterMatchOnKeyList.stream().allMatch(filterMatchOnKeyListItem -> {
@@ -193,7 +200,11 @@ public abstract class PipeType<T> {
                             StringTag filterMatchOnKeyString = (StringTag) filterMatchOnKey;
                             return !itemCompound.contains(filterMatchOnKeyString.getAsString());
                         }
+                        break;
                     default:
+                        if(!(stackTag instanceof CompoundTag))
+                            return false;
+                        itemCompound = (CompoundTag) stackTag;
                         if (itemCompound.contains(key)) {
                             return deepFuzzyCompare(filterMatchOnKey, itemCompound.get(key));
                         }
