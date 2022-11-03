@@ -194,19 +194,19 @@ public class ItemPipeType extends PipeType<Item> {
     }
 
     private boolean canInsert(PipeTileEntity.Connection connection, ItemStack stack, List<Filter<?>> filters) {
-        for (Filter<Item> filter : filters.stream().map(filter -> (Filter<Item>) filter).filter(Filter::isInvert).filter(f -> matchesConnection(connection, f)).collect(Collectors.toList())) {
-            if (matches(filter, stack)) {
+        for (Filter<Item> filter : filters.stream().map(filter -> (Filter<Item>) filter).filter(Filter::isInvert).collect(Collectors.toList())) {
+            if (matches(filter, stack) && matchesConnection(connection, filter)) {
                 System.out.println("can Insert?: false");
                 return false;
             }
         }
-        List<Filter<Item>> collect = filters.stream().map(filter -> (Filter<Item>) filter).filter(f -> !f.isInvert()).filter(f -> matchesConnection(connection, f)).collect(Collectors.toList());
+        List<Filter<Item>> collect = filters.stream().map(filter -> (Filter<Item>) filter).filter(f -> !f.isInvert()).collect(Collectors.toList());
         if (collect.isEmpty()) {
             System.out.println("can Insert?: true");
             return true;
         }
 
-        boolean matchesAny = collect.stream().anyMatch(filter -> matches(filter, stack));
+        boolean matchesAny = collect.stream().filter(filter -> matches(filter, stack)).filter(f->matchesConnection(connection, f)).count()>0;
         System.out.println("can Insert?: "+matchesAny);
         return matchesAny;
     }
