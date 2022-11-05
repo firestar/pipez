@@ -62,7 +62,7 @@ public class FluidPipeType extends PipeType<Fluid> {
     @Override
     public void tick(PipeLogicTileEntity tileEntity) {
         for (Direction side : Direction.values()) {
-            if (!tileEntity.isExtracting(side)) {
+            if (!tileEntity.isExtractingFluids(side)) {
                 continue;
             }
             if (!tileEntity.shouldWork(side, this)) {

@@ -43,7 +43,7 @@ public class FluidPipeBlock extends PipeBlock {
     @Override
     public InteractionResult onPipeSideActivated(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit, Direction direction) {
         BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof FluidPipeTileEntity && isExtracting(worldIn, pos, direction)) {
+        if (tileEntity instanceof FluidPipeTileEntity && isExtractingFluid(worldIn, pos, direction)) {
             if (worldIn.isClientSide) {
                 return InteractionResult.SUCCESS;
             }

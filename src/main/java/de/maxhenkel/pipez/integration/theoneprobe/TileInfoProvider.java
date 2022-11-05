@@ -42,7 +42,7 @@ public class TileInfoProvider implements IProbeInfoProvider {
 
             PipeLogicTileEntity pipeTile = (PipeLogicTileEntity) te;
 
-            if (!pipeTile.isExtracting(selectedSide)) {
+            if (!pipeTile.isExtractingItems(selectedSide) && !pipeTile.isExtractingFluids(selectedSide) && !pipeTile.isExtractingEnergy(selectedSide)) {
                 return;
             }
 

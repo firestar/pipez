@@ -71,7 +71,7 @@ public class ItemPipeType extends PipeType<Item> {
             if (tileEntity.getLevel().getGameTime() % getSpeed(tileEntity, side) != 0) {
                 continue;
             }
-            if (!tileEntity.isExtracting(side)) {
+            if (!tileEntity.isExtractingItems(side)) {
                 continue;
             }
             if (!tileEntity.shouldWork(side, this)) {

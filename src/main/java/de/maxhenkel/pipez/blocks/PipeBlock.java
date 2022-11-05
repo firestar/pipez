@@ -8,6 +8,7 @@ import de.maxhenkel.corelib.helpers.Triple;
 import de.maxhenkel.pipez.ModItemGroups;
 import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.UpgradeTileEntity;
+import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
 import de.maxhenkel.pipez.items.UpgradeItem;
 import de.maxhenkel.pipez.items.WrenchItem;
 import net.minecraft.core.BlockPos;
@@ -103,13 +104,42 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
         }
         if (side != null) {
             if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
-                boolean extracting = isExtracting(worldIn, pos, side);
-                if (extracting) {
-                    setExtracting(worldIn, pos, side, false);
-                    setDisconnected(worldIn, pos, side, true);
-                } else {
-                    setExtracting(worldIn, pos, side, true);
+                boolean extractingItem = isExtractingItem(worldIn, pos, side);
+                boolean extractingFluid = isExtractingFluid(worldIn, pos, side);
+                boolean extractingEnergy = isExtractingEnergy(worldIn, pos, side);
+
+                // None selected
+                if(!extractingItem && !extractingFluid && !extractingEnergy){ // select All
+                    setExtracting(worldIn, pos, side, true, 0);
+                    setExtracting(worldIn, pos, side, true, 1);
+                    setExtracting(worldIn, pos, side, true, 2);
                     setDisconnected(worldIn, pos, side, false);
+
+                // All selected
+                }else if (extractingItem && extractingFluid && extractingEnergy){ // select Item
+                    setExtracting(worldIn, pos, side, true, 0);
+                    setExtracting(worldIn, pos, side, false, 1);
+                    setExtracting(worldIn, pos, side, false, 2);
+                    setDisconnected(worldIn, pos, side, false);
+
+                // Item Selected
+                } else if(extractingItem && !extractingFluid && !extractingEnergy){ // select fluid
+                    setExtracting(worldIn, pos, side, false, 0);
+                    setExtracting(worldIn, pos, side, true, 1);
+                    setDisconnected(worldIn, pos, side, false);
+
+                // Fluid Selected
+                }else if(!extractingItem && extractingFluid && !extractingEnergy){ // select energy
+                    setExtracting(worldIn, pos, side, false, 1);
+                    setExtracting(worldIn, pos, side, true, 2);
+                    setDisconnected(worldIn, pos, side, false);
+
+                // Energy Selected
+                }else if(!extractingItem && !extractingFluid && extractingEnergy){ // select disconnected
+                    setExtracting(worldIn, pos, side, false, 0);
+                    setExtracting(worldIn, pos, side, false, 1);
+                    setExtracting(worldIn, pos, side, false, 2);
+                    setDisconnected(worldIn, pos, side, true);
                 }
             } else {
                 setDisconnected(worldIn, pos, side, true);
@@ -118,7 +148,9 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
             // Core
             side = hit.getDirection();
             if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
-                setExtracting(worldIn, pos, side, false);
+                setExtracting(worldIn, pos, side, false, 0);
+                setExtracting(worldIn, pos, side, false, 1);
+                setExtracting(worldIn, pos, side, false, 2);
                 if (isAbleToConnect(worldIn, pos, side)) {
                     setDisconnected(worldIn, pos, side, false);
                 }
@@ -183,12 +215,28 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
         }
     }
 
-    public boolean isExtracting(LevelAccessor world, BlockPos pos, Direction side) {
+    public boolean isExtractingItem(LevelAccessor world, BlockPos pos, Direction side) {
         PipeTileEntity pipe = getTileEntity(world, pos);
         if (pipe == null) {
             return false;
         }
-        return pipe.isExtracting(side);
+        return pipe.isExtractingItems(side);
+    }
+
+    public boolean isExtractingFluid(LevelAccessor world, BlockPos pos, Direction side) {
+        PipeTileEntity pipe = getTileEntity(world, pos);
+        if (pipe == null) {
+            return false;
+        }
+        return pipe.isExtractingFluids(side);
+    }
+
+    public boolean isExtractingEnergy(LevelAccessor world, BlockPos pos, Direction side) {
+        PipeTileEntity pipe = getTileEntity(world, pos);
+        if (pipe == null) {
+            return false;
+        }
+        return pipe.isExtractingEnergy(side);
     }
 
     public boolean isDisconnected(LevelAccessor world, BlockPos pos, Direction side) {
@@ -207,21 +255,42 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
         }
     }
 
-    public void setExtracting(Level world, BlockPos pos, Direction side, boolean extracting) {
+    public void setExtracting(Level world, BlockPos pos, Direction side, boolean extracting, int type) {
         PipeTileEntity pipe = getTileEntity(world, pos);
         if (pipe == null) {
             if (extracting) {
                 setHasData(world, pos, true);
                 pipe = getTileEntity(world, pos);
                 if (pipe != null) {
-                    pipe.setExtracting(side, extracting);
+                    switch(type){
+                        case 0->pipe.setExtractingItem(side, extracting);
+                        case 1->pipe.setExtractingFluid(side, extracting);
+                        case 2->pipe.setExtractingEnergy(side, extracting);
+                    }
                 }
             }
         } else {
-            pipe.setExtracting(side, extracting);
-            if (!pipe.hasReasonToStay()) {
-                setHasData(world, pos, false);
+            switch(type){
+                case 0->{
+                    pipe.setExtractingItem(side, extracting);
+                    if (!pipe.hasReasonToStayItem()) {
+                        setHasData(world, pos, false);
+                    }
+                }
+                case 1->{
+                    pipe.setExtractingFluid(side, extracting);
+                    if (!pipe.hasReasonToStayFluid()) {
+                        setHasData(world, pos, false);
+                    }
+                }
+                case 2->{
+                    pipe.setExtractingEnergy(side, extracting);
+                    if (!pipe.hasReasonToStayEnergy()) {
+                        setHasData(world, pos, false);
+                    }
+                }
             }
+
         }
         BlockState blockState = world.getBlockState(pos);
         BooleanProperty sideProperty = getProperty(side);
@@ -243,7 +312,7 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
             }
         } else {
             pipe.setDisconnected(side, disconnected);
-            if (!pipe.hasReasonToStay()) {
+            if (!pipe.hasReasonToStayItem() && !pipe.hasReasonToStayFluid() && !pipe.hasReasonToStayEnergy()) {
                 setHasData(world, pos, false);
             }
             world.setBlockAndUpdate(pos, world.getBlockState(pos).setValue(getProperty(side), !disconnected));
@@ -349,42 +418,42 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
 
         VoxelShape shape = SHAPE_CORE;
         if (state.getValue(UP)) {
-            if (pipe != null && pipe.isExtracting(Direction.UP)) {
+            if (pipe != null && (pipe.isExtractingItems(Direction.UP) || pipe.isExtractingFluids(Direction.UP) || pipe.isExtractingEnergy(Direction.UP))) {
                 shape = VoxelUtils.combine(shape, SHAPE_EXTRACT_UP);
             } else {
                 shape = VoxelUtils.combine(shape, SHAPE_UP);
             }
         }
         if (state.getValue(DOWN)) {
-            if (pipe != null && pipe.isExtracting(Direction.DOWN)) {
+            if (pipe != null && (pipe.isExtractingItems(Direction.DOWN) || pipe.isExtractingFluids(Direction.DOWN) || pipe.isExtractingEnergy(Direction.DOWN))) {
                 shape = VoxelUtils.combine(shape, SHAPE_EXTRACT_DOWN);
             } else {
                 shape = VoxelUtils.combine(shape, SHAPE_DOWN);
             }
         }
         if (state.getValue(SOUTH)) {
-            if (pipe != null && pipe.isExtracting(Direction.SOUTH)) {
+            if (pipe != null && (pipe.isExtractingItems(Direction.SOUTH) || pipe.isExtractingFluids(Direction.SOUTH) || pipe.isExtractingEnergy(Direction.SOUTH))) {
                 shape = VoxelUtils.combine(shape, SHAPE_EXTRACT_SOUTH);
             } else {
                 shape = VoxelUtils.combine(shape, SHAPE_SOUTH);
             }
         }
         if (state.getValue(NORTH)) {
-            if (pipe != null && pipe.isExtracting(Direction.NORTH)) {
+            if (pipe != null && (pipe.isExtractingItems(Direction.NORTH) || pipe.isExtractingFluids(Direction.NORTH) || pipe.isExtractingEnergy(Direction.NORTH))) {
                 shape = VoxelUtils.combine(shape, SHAPE_EXTRACT_NORTH);
             } else {
                 shape = VoxelUtils.combine(shape, SHAPE_NORTH);
             }
         }
         if (state.getValue(EAST)) {
-            if (pipe != null && pipe.isExtracting(Direction.EAST)) {
+            if (pipe != null && (pipe.isExtractingItems(Direction.EAST) || pipe.isExtractingFluids(Direction.EAST) || pipe.isExtractingEnergy(Direction.EAST))) {
                 shape = VoxelUtils.combine(shape, SHAPE_EXTRACT_EAST);
             } else {
                 shape = VoxelUtils.combine(shape, SHAPE_EAST);
             }
         }
         if (state.getValue(WEST)) {
-            if (pipe != null && pipe.isExtracting(Direction.WEST)) {
+            if (pipe != null && (pipe.isExtractingItems(Direction.WEST) || pipe.isExtractingFluids(Direction.WEST) || pipe.isExtractingEnergy(Direction.WEST))) {
                 shape = VoxelUtils.combine(shape, SHAPE_EXTRACT_WEST);
             } else {
                 shape = VoxelUtils.combine(shape, SHAPE_WEST);
@@ -462,7 +531,7 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
         for (int i = 0; i < Direction.values().length; i++) {
             Pair<VoxelShape, Direction> extract = EXTRACT_SHAPES.get(i);
             Triple<VoxelShape, BooleanProperty, Direction> shape = SHAPES.get(i);
-            if (pipe != null && pipe.isExtracting(extract.getValue())) {
+            if (pipe != null && (pipe.isExtractingItems(extract.getValue()) || pipe.isExtractingFluids(extract.getValue()) || pipe.isExtractingEnergy(extract.getValue()))) {
                 d = checkShape(state, blockReader, pos, start, end, extract.getKey(), pipe, extract.getValue());
                 if (d < shortest) {
                     shortest = d;
@@ -498,7 +567,7 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
     }
 
     private double checkShape(BlockState state, BlockGetter world, BlockPos pos, Vec3 start, Vec3 end, VoxelShape shape, @Nullable PipeTileEntity pipe, Direction side) {
-        if (pipe != null && !pipe.isExtracting(side)) {
+        if (pipe != null && !(pipe.isExtractingItems(side) || pipe.isExtractingFluids(side) || pipe.isExtractingEnergy(side))) {
             return Double.MAX_VALUE;
         }
         BlockHitResult blockRayTraceResult = world.clipWithInteractionOverride(start, end, pos, shape, state);

@@ -38,13 +38,13 @@ public abstract class PipeRenderer implements BlockEntityRenderer<PipeTileEntity
         VertexConsumer b = buffer.getBuffer(RenderType.solid());
 
         for (Direction side : Direction.values()) {
-            if (pipe.isExtracting(side)) {
+            if (pipe.isExtractingItems(side) || pipe.isExtractingFluids(side) || pipe.isExtractingEnergy(side)) {
                 renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
             }
         }
     }
 
-    private void renderExtractor(Direction direction, PoseStack matrixStack, VertexConsumer b, List<BakedQuad> quads, int combinedLight, int combinedOverlay) {
+    public void renderExtractor(Direction direction, PoseStack matrixStack, VertexConsumer b, List<BakedQuad> quads, int combinedLight, int combinedOverlay) {
         matrixStack.pushPose();
         matrixStack.translate(direction.getStepX() * 0.001D, direction.getStepY() * 0.001D, direction.getStepZ() * 0.001D);
         matrixStack.translate(0.5D, 0.5D, 0.5D);

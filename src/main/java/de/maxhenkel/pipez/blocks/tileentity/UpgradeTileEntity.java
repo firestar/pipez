@@ -2,6 +2,9 @@ package de.maxhenkel.pipez.blocks.tileentity;
 
 import de.maxhenkel.corelib.inventory.ItemListInventory;
 import de.maxhenkel.corelib.item.ItemUtils;
+import de.maxhenkel.pipez.blocks.tileentity.types.EnergyPipeType;
+import de.maxhenkel.pipez.blocks.tileentity.types.FluidPipeType;
+import de.maxhenkel.pipez.blocks.tileentity.types.ItemPipeType;
 import de.maxhenkel.pipez.filters.Filter;
 import de.maxhenkel.pipez.Upgrade;
 import de.maxhenkel.pipez.blocks.tileentity.configuration.DistributionCache;
@@ -103,8 +106,28 @@ public abstract class UpgradeTileEntity extends PipeTileEntity {
     }
 
     @Override
-    public void setExtracting(Direction side, boolean extracting) {
-        super.setExtracting(side, extracting);
+    public void setExtractingItem(Direction side, boolean extracting) {
+        super.setExtractingItem(side, extracting);
+        if (!extracting) {
+            ItemStack stack = upgradeInventory.get(side.get3DDataValue());
+            upgradeInventory.set(side.get3DDataValue(), ItemStack.EMPTY);
+            Containers.dropContents(level, worldPosition, NonNullList.of(ItemStack.EMPTY, stack));
+            setChanged();
+        }
+    }
+    @Override
+    public void setExtractingEnergy(Direction side, boolean extracting) {
+        super.setExtractingEnergy(side, extracting);
+        if (!extracting) {
+            ItemStack stack = upgradeInventory.get(side.get3DDataValue());
+            upgradeInventory.set(side.get3DDataValue(), ItemStack.EMPTY);
+            Containers.dropContents(level, worldPosition, NonNullList.of(ItemStack.EMPTY, stack));
+            setChanged();
+        }
+    }
+    @Override
+    public void setExtractingFluid(Direction side, boolean extracting) {
+        super.setExtractingFluid(side, extracting);
         if (!extracting) {
             ItemStack stack = upgradeInventory.get(side.get3DDataValue());
             upgradeInventory.set(side.get3DDataValue(), ItemStack.EMPTY);
@@ -143,17 +166,27 @@ public abstract class UpgradeTileEntity extends PipeTileEntity {
 
     public List<PipeTileEntity.Connection> getSortedConnections(Direction side, PipeType pipeType) {
         UpgradeTileEntity.Distribution distribution = getDistribution(side, pipeType);
+        List<PipeTileEntity.Connection> connections;
+        if (ItemPipeType.INSTANCE == pipeType) {
+            connections = getConnectionsItem();
+        } else if (FluidPipeType.INSTANCE == pipeType) {
+            connections = getConnectionsFluid();
+        } else if (EnergyPipeType.INSTANCE == pipeType) {
+            connections = getConnectionsEnergy();
+        } else {
+            connections = getConnectionsItem();
+        }
         switch (distribution) {
             case FURTHEST:
-                return getConnections().stream().sorted((o1, o2) -> Integer.compare(o2.getDistance(), o1.getDistance())).collect(Collectors.toList());
+                return connections.stream().sorted((o1, o2) -> Integer.compare(o2.getDistance(), o1.getDistance())).collect(Collectors.toList());
             case RANDOM:
-                ArrayList<PipeTileEntity.Connection> shuffle = new ArrayList<>(getConnections());
+                ArrayList<PipeTileEntity.Connection> shuffle = new ArrayList<>(connections);
                 Collections.shuffle(shuffle);
                 return shuffle;
             case NEAREST:
             case ROUND_ROBIN:
             default:
-                return getConnections().stream().sorted(Comparator.comparingInt(PipeTileEntity.Connection::getDistance)).collect(Collectors.toList());
+                return connections.stream().sorted(Comparator.comparingInt(PipeTileEntity.Connection::getDistance)).collect(Collectors.toList());
         }
     }
 

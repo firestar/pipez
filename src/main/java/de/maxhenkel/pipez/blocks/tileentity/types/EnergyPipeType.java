@@ -68,7 +68,7 @@ public class EnergyPipeType extends PipeType<Void> {
     }
 
     public void pullEnergy(PipeLogicTileEntity tileEntity, Direction side) {
-        if (!tileEntity.isExtracting(side)) {
+        if (!tileEntity.isExtractingEnergy(side)) {
             return;
         }
         if (!tileEntity.shouldWork(side, this)) {
@@ -89,7 +89,7 @@ public class EnergyPipeType extends PipeType<Void> {
     }
 
     public int receive(PipeLogicTileEntity tileEntity, Direction side, int amount, boolean simulate) {
-        if (!tileEntity.isExtracting(side)) {
+        if (!tileEntity.isExtractingEnergy(side)) {
             return 0;
         }
         if (!tileEntity.shouldWork(side, this)) {
