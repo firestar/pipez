@@ -53,13 +53,17 @@ public class UniversalPipeRenderer extends PipeRenderer {
             }else if (pipe.isExtractingItems(side)) {
                 BakedModel iBakedModel = cachedModels[1].get();
                 quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
-                buffer.getBuffer(RenderType.solid());
+                b = buffer.getBuffer(RenderType.solid());
             }else if (pipe.isExtractingFluids(side)) {
                 BakedModel iBakedModel = cachedModels[2].get();
                 quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
                 b = buffer.getBuffer(RenderType.solid());
             }else if (pipe.isExtractingEnergy(side)) {
                 BakedModel iBakedModel = cachedModels[3].get();
+                quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
+                b = buffer.getBuffer(RenderType.solid());
+            }else{
+                BakedModel iBakedModel = cachedModels[0].get();
                 quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
                 b = buffer.getBuffer(RenderType.solid());
             }
@@ -69,6 +73,6 @@ public class UniversalPipeRenderer extends PipeRenderer {
 
     @Override
     Model getModel() {
-        return null;
+        return Model.UNIVERSAL_PIPE_EXTRACT;
     }
 }

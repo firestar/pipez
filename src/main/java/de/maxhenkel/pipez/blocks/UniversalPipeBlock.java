@@ -1,6 +1,7 @@
 package de.maxhenkel.pipez.blocks;
 
 import de.maxhenkel.pipez.Main;
+import de.maxhenkel.pipez.blocks.tileentity.PipeTileEntity;
 import de.maxhenkel.pipez.blocks.tileentity.UniversalPipeTileEntity;
 import de.maxhenkel.pipez.capabilities.ModCapabilities;
 import de.maxhenkel.pipez.gui.ExtractContainer;
@@ -35,6 +36,72 @@ public class UniversalPipeBlock extends PipeBlock {
                         || te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite()).isPresent()
                         || te.getCapability(ModCapabilities.GAS_HANDLER_CAPABILITY, facing.getOpposite()).isPresent()
         );
+    }
+    @Override
+    public InteractionResult onWrenchClicked(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit, Direction side) {
+        if (!player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
+        if (side != null) {
+            if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
+                boolean extractingItem = isExtractingItem(worldIn, pos, side);
+                boolean extractingFluid = isExtractingFluid(worldIn, pos, side);
+                boolean extractingEnergy = isExtractingEnergy(worldIn, pos, side);
+
+                // None selected
+                if(!extractingItem && !extractingFluid && !extractingEnergy){ // select All
+                    setExtracting(worldIn, pos, side, true, 0);
+                    setExtracting(worldIn, pos, side, true, 1);
+                    setExtracting(worldIn, pos, side, true, 2);
+                    setDisconnected(worldIn, pos, side, false);
+
+                    // All selected
+                }else if (extractingItem && extractingFluid && extractingEnergy){ // select Item
+                    setExtracting(worldIn, pos, side, true, 0);
+                    setExtracting(worldIn, pos, side, false, 1);
+                    setExtracting(worldIn, pos, side, false, 2);
+                    setDisconnected(worldIn, pos, side, false);
+
+                    // Item Selected
+                } else if(extractingItem && !extractingFluid && !extractingEnergy){ // select fluid
+                    setExtracting(worldIn, pos, side, false, 0);
+                    setExtracting(worldIn, pos, side, true, 1);
+                    setDisconnected(worldIn, pos, side, false);
+
+                    // Fluid Selected
+                }else if(!extractingItem && extractingFluid && !extractingEnergy){ // select energy
+                    setExtracting(worldIn, pos, side, false, 1);
+                    setExtracting(worldIn, pos, side, true, 2);
+                    setDisconnected(worldIn, pos, side, false);
+
+                    // Energy Selected
+                }else if(!extractingItem && !extractingFluid && extractingEnergy){ // select disconnected
+                    setExtracting(worldIn, pos, side, false, 0);
+                    setExtracting(worldIn, pos, side, false, 1);
+                    setExtracting(worldIn, pos, side, false, 2);
+                    setDisconnected(worldIn, pos, side, true);
+                }
+            } else {
+                setDisconnected(worldIn, pos, side, true);
+            }
+        } else {
+            // Core
+            side = hit.getDirection();
+            if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
+                setExtracting(worldIn, pos, side, false, 0);
+                setExtracting(worldIn, pos, side, false, 1);
+                setExtracting(worldIn, pos, side, false, 2);
+                if (isAbleToConnect(worldIn, pos, side)) {
+                    setDisconnected(worldIn, pos, side, false);
+                }
+            } else {
+                setDisconnected(worldIn, pos, side, false);
+                setDisconnected(worldIn, pos.relative(side), side.getOpposite(), false);
+            }
+        }
+
+        PipeTileEntity.markPipesDirty(worldIn, pos);
+        return InteractionResult.SUCCESS;
     }
 
     @Override

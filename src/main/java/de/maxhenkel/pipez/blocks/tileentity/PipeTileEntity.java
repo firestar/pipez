@@ -45,6 +45,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
         extractingSideFluid = new boolean[Direction.values().length];
         extractingSideEnergy = new boolean[Direction.values().length];
         extractingSideItem = new boolean[Direction.values().length];
+
         disconnectedSides = new boolean[Direction.values().length];
     }
 
@@ -97,13 +98,14 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
         PipeTileEntity pipeTe = pipeBlock.getTileEntity(world, pos);
         if (pipeTe != null) {
             for (Direction side : Direction.values()) {
+                boolean changed = false;
                 if (pipeTe.isExtractingItems(side)) {
                     if (!pipeBlock.canConnectTo(world, pos, side)) {
                         pipeTe.setExtractingItem(side, false);
                         if (!pipeTe.hasReasonToStayItem()) {
                             pipeBlock.setHasData(world, pos, false);
                         }
-                        pipeTe.syncData();
+                        changed = true;
                     }
                 }
                 if (pipeTe.isExtractingEnergy(side)) {
@@ -112,7 +114,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                         if (!pipeTe.hasReasonToStayEnergy()) {
                             pipeBlock.setHasData(world, pos, false);
                         }
-                        pipeTe.syncData();
+                        changed = true;
                     }
                 }
                 if (pipeTe.isExtractingFluids(side)) {
@@ -121,9 +123,11 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                         if (!pipeTe.hasReasonToStayFluid()) {
                             pipeBlock.setHasData(world, pos, false);
                         }
-                        pipeTe.syncData();
+                        changed = true;
+
                     }
                 }
+                if (changed) pipeTe.syncData();
             }
         }
 
@@ -479,7 +483,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
         }
         compound.put("ExtractingSideEnergy", extractingListEnergy);
 
-        compound.remove("ExtractingSides");
+        if(compound.contains("ExtractingSides")) compound.remove("ExtractingSides");
 
         ListTag disconnectedList = new ListTag();
         for (boolean disconnected : disconnectedSides) {

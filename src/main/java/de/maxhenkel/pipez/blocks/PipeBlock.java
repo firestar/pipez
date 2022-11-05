@@ -116,32 +116,16 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
                     setDisconnected(worldIn, pos, side, false);
 
                 // All selected
-                }else if (extractingItem && extractingFluid && extractingEnergy){ // select Item
-                    setExtracting(worldIn, pos, side, true, 0);
-                    setExtracting(worldIn, pos, side, false, 1);
-                    setExtracting(worldIn, pos, side, false, 2);
-                    setDisconnected(worldIn, pos, side, false);
-
-                // Item Selected
-                } else if(extractingItem && !extractingFluid && !extractingEnergy){ // select fluid
-                    setExtracting(worldIn, pos, side, false, 0);
-                    setExtracting(worldIn, pos, side, true, 1);
-                    setDisconnected(worldIn, pos, side, false);
-
-                // Fluid Selected
-                }else if(!extractingItem && extractingFluid && !extractingEnergy){ // select energy
-                    setExtracting(worldIn, pos, side, false, 1);
-                    setExtracting(worldIn, pos, side, true, 2);
-                    setDisconnected(worldIn, pos, side, false);
-
-                // Energy Selected
-                }else if(!extractingItem && !extractingFluid && extractingEnergy){ // select disconnected
+                } else if(!extractingItem && !extractingFluid && extractingEnergy){ // select disconnected
                     setExtracting(worldIn, pos, side, false, 0);
                     setExtracting(worldIn, pos, side, false, 1);
                     setExtracting(worldIn, pos, side, false, 2);
                     setDisconnected(worldIn, pos, side, true);
                 }
             } else {
+                setExtracting(worldIn, pos, side, false, 0);
+                setExtracting(worldIn, pos, side, false, 1);
+                setExtracting(worldIn, pos, side, false, 2);
                 setDisconnected(worldIn, pos, side, true);
             }
         } else {
