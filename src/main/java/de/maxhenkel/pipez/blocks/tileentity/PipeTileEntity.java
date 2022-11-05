@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public abstract class PipeTileEntity extends BlockEntity implements ITickableBlockEntity {
 
     @Nullable
-    protected List<Connection>[] connectionCache;
+    protected List<Connection>[] connectionCache = new List[3];
     protected boolean[] extractingSideEnergy;
     protected boolean[] extractingSideItem;
     protected boolean[] extractingSideFluid;
