@@ -384,14 +384,17 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
 
     public void setExtractingItem(Direction side, boolean extracting) {
         extractingSideItem[side.get3DDataValue()] = extracting;
+        System.out.println(side.getName()+" set item extracting to "+extracting);
         setChanged();
     }
     public void setExtractingFluid(Direction side, boolean extracting) {
         extractingSideFluid[side.get3DDataValue()] = extracting;
+        System.out.println(side.getName()+" set fluid extracting to "+extracting);
         setChanged();
     }
     public void setExtractingEnergy(Direction side, boolean extracting) {
         extractingSideEnergy[side.get3DDataValue()] = extracting;
+        System.out.println(side.getName()+" set energy extracting to "+extracting);
         setChanged();
     }
 
@@ -417,6 +420,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                 for (int i = 0; i < extractingSideItem.length; i++) {
                     ByteTag b = (ByteTag) extractingListItems.get(i);
                     extractingSideItem[i] = b.getAsByte() != 0;
+                    System.out.println(i+" set item extracting to "+extractingSideItem[i]);
                 }
             }
         }
@@ -426,6 +430,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                 for (int i = 0; i < extractingSideFluid.length; i++) {
                     ByteTag b = (ByteTag) extractingListFluids.get(i);
                     extractingSideFluid[i] = b.getAsByte() != 0;
+                    System.out.println(i+" set fluid extracting to "+extractingSideFluid[i]);
                 }
             }
         }
@@ -435,6 +440,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                 for (int i = 0; i < extractingSideEnergy.length; i++) {
                     ByteTag b = (ByteTag) extractingListEnergy.get(i);
                     extractingSideEnergy[i] = b.getAsByte() != 0;
+                    System.out.println(i+" set energy extracting to "+extractingSideEnergy[i]);
                 }
             }
         }
@@ -447,6 +453,9 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                     extractingSideEnergy[i] = b.getAsByte() != 0;
                     extractingSideFluid[i] = b.getAsByte() != 0;
                     extractingSideItem[i] = b.getAsByte() != 0;
+                    System.out.println(i+" set item extracting to "+extractingSideItem[i]);
+                    System.out.println(i+" set fluid extracting to "+extractingSideFluid[i]);
+                    System.out.println(i+" set energy extracting to "+extractingSideEnergy[i]);
                 }
             }
         }
@@ -468,18 +477,21 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
         ListTag extractingListItem = new ListTag();
         for (boolean extractingSide : extractingSideItem) {
             extractingListItem.add(ByteTag.valueOf(extractingSide));
+            System.out.println(this.getBlockPos().getX()+","+this.getBlockPos().getY()+","+this.getBlockPos().getZ()+": "+extractingListItem.size()+" saved item extracting to "+extractingSide);
         }
         compound.put("ExtractingSideItem", extractingListItem);
 
         ListTag extractingListFluid = new ListTag();
         for (boolean extractingSide : extractingSideFluid) {
             extractingListFluid.add(ByteTag.valueOf(extractingSide));
+            System.out.println(this.getBlockPos().getX()+","+this.getBlockPos().getY()+","+this.getBlockPos().getZ()+": "+extractingListFluid.size()+" saved fluid extracting to "+extractingSide);
         }
         compound.put("ExtractingSideFluid", extractingListFluid);
 
         ListTag extractingListEnergy = new ListTag();
         for (boolean extractingSide : extractingSideEnergy) {
             extractingListEnergy.add(ByteTag.valueOf(extractingSide));
+            System.out.println(this.getBlockPos().getX()+","+this.getBlockPos().getY()+","+this.getBlockPos().getZ()+": "+extractingListEnergy.size()+" saved energy extracting to "+extractingSide);
         }
         compound.put("ExtractingSideEnergy", extractingListEnergy);
 

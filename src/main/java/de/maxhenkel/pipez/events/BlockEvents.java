@@ -2,6 +2,7 @@ package de.maxhenkel.pipez.events;
 
 import de.maxhenkel.pipez.DirectionalPosition;
 import de.maxhenkel.pipez.blocks.PipeBlock;
+import de.maxhenkel.pipez.blocks.UniversalPipeBlock;
 import de.maxhenkel.pipez.items.FilterDestinationToolItem;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -28,10 +29,9 @@ public class BlockEvents {
         }
 
         PipeBlock pipe = (PipeBlock) state.getBlock();
-
         Direction side = pipe.getSelection(state, event.getWorld(), event.getPos(), event.getPlayer()).getKey();
         InteractionResult result = pipe.onPipeSideForceActivated(state, event.getWorld(), event.getPos(), event.getPlayer(), event.getHand(), event.getHitVec(), side);
-        if (result.consumesAction()) {
+        if (result !=null && result.consumesAction()) {
             event.setUseItem(Event.Result.ALLOW);
             event.setCancellationResult(result);
             event.setCanceled(true);

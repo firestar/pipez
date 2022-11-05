@@ -103,6 +103,7 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
             return InteractionResult.PASS;
         }
         if (side != null) {
+            System.out.println("Hit PipeBlock Wrench side not null");
             if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
                 boolean extractingItem = isExtractingItem(worldIn, pos, side);
                 boolean extractingFluid = isExtractingFluid(worldIn, pos, side);
@@ -110,28 +111,33 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
 
                 // None selected
                 if(!extractingItem && !extractingFluid && !extractingEnergy){ // select All
+                    System.out.println("PipeBlock Wrench select all");
                     setExtracting(worldIn, pos, side, true, 0);
                     setExtracting(worldIn, pos, side, true, 1);
                     setExtracting(worldIn, pos, side, true, 2);
                     setDisconnected(worldIn, pos, side, false);
 
                 // All selected
-                } else if(!extractingItem && !extractingFluid && extractingEnergy){ // select disconnected
+                } else if(extractingItem && extractingFluid && extractingEnergy){ // select disconnected
+                    System.out.println("PipeBlock Wrench disconnect");
                     setExtracting(worldIn, pos, side, false, 0);
                     setExtracting(worldIn, pos, side, false, 1);
                     setExtracting(worldIn, pos, side, false, 2);
                     setDisconnected(worldIn, pos, side, true);
                 }
             } else {
+                System.out.println("PipeBlock Wrench disconnect");
                 setExtracting(worldIn, pos, side, false, 0);
                 setExtracting(worldIn, pos, side, false, 1);
                 setExtracting(worldIn, pos, side, false, 2);
                 setDisconnected(worldIn, pos, side, true);
             }
         } else {
+            System.out.println("Hit PipeBlock Wrench side null");
             // Core
             side = hit.getDirection();
             if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
+                System.out.println("PipeBlock Wrench reconnect");
                 setExtracting(worldIn, pos, side, false, 0);
                 setExtracting(worldIn, pos, side, false, 1);
                 setExtracting(worldIn, pos, side, false, 2);
@@ -139,6 +145,7 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
                     setDisconnected(worldIn, pos, side, false);
                 }
             } else {
+                System.out.println("PipeBlock Wrench reconnect");
                 setDisconnected(worldIn, pos, side, false);
                 setDisconnected(worldIn, pos.relative(side), side.getOpposite(), false);
             }
@@ -242,34 +249,32 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
     public void setExtracting(Level world, BlockPos pos, Direction side, boolean extracting, int type) {
         PipeTileEntity pipe = getTileEntity(world, pos);
         if (pipe == null) {
-            if (extracting) {
-                setHasData(world, pos, true);
-                pipe = getTileEntity(world, pos);
-                if (pipe != null) {
-                    switch(type){
-                        case 0->pipe.setExtractingItem(side, extracting);
-                        case 1->pipe.setExtractingFluid(side, extracting);
-                        case 2->pipe.setExtractingEnergy(side, extracting);
-                    }
+            setHasData(world, pos, true);
+            pipe = getTileEntity(world, pos);
+            if (pipe != null) {
+                switch(type){
+                    case 0->pipe.setExtractingItem(side, extracting);
+                    case 1->pipe.setExtractingFluid(side, extracting);
+                    case 2->pipe.setExtractingEnergy(side, extracting);
                 }
             }
         } else {
             switch(type){
                 case 0->{
                     pipe.setExtractingItem(side, extracting);
-                    if (!pipe.hasReasonToStayItem()) {
+                    if (!pipe.hasReasonToStayItem() && !pipe.hasReasonToStayFluid() && !pipe.hasReasonToStayEnergy()) {
                         setHasData(world, pos, false);
                     }
                 }
                 case 1->{
                     pipe.setExtractingFluid(side, extracting);
-                    if (!pipe.hasReasonToStayFluid()) {
+                    if (!pipe.hasReasonToStayItem() && !pipe.hasReasonToStayFluid() && !pipe.hasReasonToStayEnergy()) {
                         setHasData(world, pos, false);
                     }
                 }
                 case 2->{
                     pipe.setExtractingEnergy(side, extracting);
-                    if (!pipe.hasReasonToStayEnergy()) {
+                    if (!pipe.hasReasonToStayItem() && !pipe.hasReasonToStayFluid() && !pipe.hasReasonToStayEnergy()) {
                         setHasData(world, pos, false);
                     }
                 }

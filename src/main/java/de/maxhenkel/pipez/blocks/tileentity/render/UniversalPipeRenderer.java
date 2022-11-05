@@ -38,7 +38,7 @@ public class UniversalPipeRenderer extends PipeRenderer {
         return Model.UNIVERSAL_PIPE_EXTRACT_FLUID_ONLY;
     }
     Model getModelEnergy() {
-        return Model.UNIVERSAL_PIPE_EXTRACT_FLUID_ONLY;
+        return Model.UNIVERSAL_PIPE_EXTRACT_ENERGY_ONLY;
     }
 
     @Override
@@ -50,24 +50,24 @@ public class UniversalPipeRenderer extends PipeRenderer {
                 BakedModel iBakedModel = cachedModels[0].get();
                 quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
                 b = buffer.getBuffer(RenderType.solid());
-            }else if (pipe.isExtractingItems(side)) {
+                renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
+            }else if (pipe.isExtractingItems(side) && !pipe.isExtractingFluids(side) && !pipe.isExtractingEnergy(side)) {
                 BakedModel iBakedModel = cachedModels[1].get();
                 quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
                 b = buffer.getBuffer(RenderType.solid());
-            }else if (pipe.isExtractingFluids(side)) {
+                renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
+            }else if (pipe.isExtractingFluids(side) && !pipe.isExtractingItems(side) && !pipe.isExtractingEnergy(side)) {
                 BakedModel iBakedModel = cachedModels[2].get();
                 quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
                 b = buffer.getBuffer(RenderType.solid());
-            }else if (pipe.isExtractingEnergy(side)) {
+                renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
+            }else if (pipe.isExtractingEnergy(side) && !pipe.isExtractingFluids(side) && !pipe.isExtractingItems(side)) {
                 BakedModel iBakedModel = cachedModels[3].get();
                 quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
                 b = buffer.getBuffer(RenderType.solid());
-            }else{
-                BakedModel iBakedModel = cachedModels[0].get();
-                quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
-                b = buffer.getBuffer(RenderType.solid());
+                renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
             }
-            renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
+
         }
     }
 
