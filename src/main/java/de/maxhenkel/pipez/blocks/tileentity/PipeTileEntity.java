@@ -142,7 +142,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                 continue;
             }
             PipeTileEntity pipe = (PipeTileEntity) te;
-            pipe.connectionCache = null;
+            pipe.connectionCache = new List[]{null, null, null};
         }
     }
 
@@ -161,11 +161,11 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
     private void updateCache() {
         BlockState blockState = getBlockState();
         if (!(blockState.getBlock() instanceof PipeBlock)) {
-            connectionCache = null;
+            connectionCache = new List[]{null, null, null};
             return;
         }
         if (!isExtractingItems() && !isExtractingFluids() && !isExtractingEnergy()) {
-            connectionCache = null;
+            connectionCache = new List[]{null, null, null};
             return;
         }
 
@@ -304,7 +304,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
         if (invalidateCountdown > 0) {
             invalidateCountdown--;
             if (invalidateCountdown <= 0) {
-                connectionCache = null;
+                connectionCache = new List[]{null, null, null};
             }
         }
     }
