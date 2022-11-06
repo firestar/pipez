@@ -167,11 +167,11 @@ public abstract class UpgradeTileEntity extends PipeTileEntity {
     public List<PipeTileEntity.Connection> getSortedConnections(Direction side, PipeType pipeType) {
         UpgradeTileEntity.Distribution distribution = getDistribution(side, pipeType);
         List<PipeTileEntity.Connection> connections;
-        if (ItemPipeType.INSTANCE == pipeType) {
+        if (ItemPipeType.INSTANCE.equals(pipeType)) {
             connections = getConnectionsItem();
-        } else if (FluidPipeType.INSTANCE == pipeType) {
+        } else if (FluidPipeType.INSTANCE.equals(pipeType)) {
             connections = getConnectionsFluid();
-        } else if (EnergyPipeType.INSTANCE == pipeType) {
+        } else if (EnergyPipeType.INSTANCE.equals(pipeType)) {
             connections = getConnectionsEnergy();
         } else {
             connections = getConnectionsItem();

@@ -162,6 +162,21 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
         }
     }
 
+    private Map<DirectionalPosition, Integer> buildConnections(Level world, BlockPos position, int type){
+        Map<DirectionalPosition, Integer> connections = new HashMap<>();
+        Map<BlockPos, Integer> queue = new HashMap<>();
+        List<BlockPos> travelPositions = new ArrayList<>();
+        addToQueue(level, worldPosition, queue, travelPositions, connections, 1, type);
+
+        while (queue.size() > 0) {
+            Map.Entry<BlockPos, Integer> blockPosIntegerEntry = queue.entrySet().stream().findAny().get();
+            addToQueue(level, blockPosIntegerEntry.getKey(), queue, travelPositions, connections, blockPosIntegerEntry.getValue(), type);
+            travelPositions.add(blockPosIntegerEntry.getKey());
+            queue.remove(blockPosIntegerEntry.getKey());
+        }
+        return connections;
+    }
+
     private void updateCache() {
         BlockState blockState = getBlockState();
         if (!(blockState.getBlock() instanceof PipeBlock)) {
@@ -173,37 +188,25 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
             return;
         }
 
-        Map<DirectionalPosition, Integer> connections = new HashMap<>();
 
-        Map<BlockPos, Integer> queue = new HashMap<>();
-        List<BlockPos> travelPositions = new ArrayList<>();
-
-        addToQueue(level, worldPosition, queue, travelPositions, connections, 1);
-
-        while (queue.size() > 0) {
-            Map.Entry<BlockPos, Integer> blockPosIntegerEntry = queue.entrySet().stream().findAny().get();
-            addToQueue(level, blockPosIntegerEntry.getKey(), queue, travelPositions, connections, blockPosIntegerEntry.getValue());
-            travelPositions.add(blockPosIntegerEntry.getKey());
-            queue.remove(blockPosIntegerEntry.getKey());
-        }
         if (isExtractingItems() && isExtractingFluids() && isExtractingEnergy()) {
-            connectionCache[0] = connections.entrySet().stream().map(entry -> new Connection(entry.getKey().getPos(), entry.getKey().getDirection(), entry.getValue())).collect(Collectors.toList());
+            connectionCache[0] = buildConnections(level, worldPosition, 0).entrySet().stream().map(entry -> new Connection(entry.getKey().getPos(), entry.getKey().getDirection(), entry.getValue())).collect(Collectors.toList());
             connectionCache[1] = connectionCache[0];
             connectionCache[2] = connectionCache[0];
             return;
         }
         if (isExtractingItems()) {
-            connectionCache[0] = connections.entrySet().stream().map(entry -> new Connection(entry.getKey().getPos(), entry.getKey().getDirection(), entry.getValue())).collect(Collectors.toList());
+            connectionCache[0] = buildConnections(level, worldPosition, 0).entrySet().stream().map(entry -> new Connection(entry.getKey().getPos(), entry.getKey().getDirection(), entry.getValue())).collect(Collectors.toList());
         }
         if (isExtractingFluids()) {
-            connectionCache[1] = connections.entrySet().stream().map(entry -> new Connection(entry.getKey().getPos(), entry.getKey().getDirection(), entry.getValue())).collect(Collectors.toList());
+            connectionCache[1] = buildConnections(level, worldPosition, 1).entrySet().stream().map(entry -> new Connection(entry.getKey().getPos(), entry.getKey().getDirection(), entry.getValue())).collect(Collectors.toList());
         }
         if (isExtractingEnergy()) {
-            connectionCache[2] = connections.entrySet().stream().map(entry -> new Connection(entry.getKey().getPos(), entry.getKey().getDirection(), entry.getValue())).collect(Collectors.toList());
+            connectionCache[2] = buildConnections(level, worldPosition, 2).entrySet().stream().map(entry -> new Connection(entry.getKey().getPos(), entry.getKey().getDirection(), entry.getValue())).collect(Collectors.toList());
         }
     }
 
-    public void addToQueue(Level world, BlockPos position, Map<BlockPos, Integer> queue, List<BlockPos> travelPositions, Map<DirectionalPosition, Integer> insertPositions, int distance) {
+    public void addToQueue(Level world, BlockPos position, Map<BlockPos, Integer> queue, List<BlockPos> travelPositions, Map<DirectionalPosition, Integer> insertPositions, int distance, int type) {
         Block block = world.getBlockState(position).getBlock();
         if (!(block instanceof PipeBlock)) {
             return;
@@ -213,7 +216,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
             if (pipeBlock.isConnected(world, position, direction)) {
                 BlockPos p = position.relative(direction);
                 DirectionalPosition dp = new DirectionalPosition(p, direction.getOpposite());
-                if (canInsertFluid(position, direction)) {
+                if (canInsertFluid(position, direction) && type==1) {
                     if (!insertPositions.containsKey(dp)) {
                         insertPositions.put(dp, distance);
                     } else {
@@ -221,7 +224,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                             insertPositions.put(dp, distance);
                         }
                     }
-                } else if (canInsertItem(position, direction)) {
+                } else if (canInsertItem(position, direction) && type==0) {
                     if (!insertPositions.containsKey(dp)) {
                         insertPositions.put(dp, distance);
                     } else {
@@ -229,7 +232,7 @@ public abstract class PipeTileEntity extends BlockEntity implements ITickableBlo
                             insertPositions.put(dp, distance);
                         }
                     }
-                } else if (canInsertEnergy(position, direction)) {
+                } else if (canInsertEnergy(position, direction) && type==2) {
                     if (!insertPositions.containsKey(dp)) {
                         insertPositions.put(dp, distance);
                     } else {

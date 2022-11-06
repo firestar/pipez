@@ -118,9 +118,11 @@ public class ItemPipeType extends PipeType<Item> {
                         continue;
                     }
 
+
                     ItemStack stack = ItemHandlerHelper.insertItem(destination, simulatedExtract, false);
                     int insertedAmount = simulatedExtract.getCount() - stack.getCount();
-                    System.out.println("sending "+insertedAmount+" "+stack.getItem().getRegistryName()+" to: "+connection.getPos());
+                    System.out.println("sending "+insertedAmount+" "+simulatedExtract.getItem().getRegistryName()+" to: "+connection.getPos());
+
                     if (insertedAmount > 0) {
                         itemsToTransfer -= insertedAmount;
                         itemHandler.extractItem(j, insertedAmount, false);
@@ -163,6 +165,7 @@ public class ItemPipeType extends PipeType<Item> {
                 }
                 System.out.println("=====================================");
                 System.out.println(connection.getPos().toString());
+
                 if (nonFittingItems.stream().anyMatch(stack -> ItemUtils.isStackable(stack, simulatedExtract))) {
                     continue;
                 }
@@ -173,7 +176,7 @@ public class ItemPipeType extends PipeType<Item> {
                 System.out.println("sending to: "+connection.getPos());
                 ItemStack stack = ItemHandlerHelper.insertItem(destination, simulatedExtract, false);
                 int insertedAmount = simulatedExtract.getCount() - stack.getCount();
-                System.out.println("sending "+insertedAmount+" "+stack.getItem().getRegistryName()+" to: "+connection.getPos());
+                System.out.println("sending "+insertedAmount+" "+simulatedExtract.getItem().getRegistryName()+" to: "+connection.getPos());
                 if (insertedAmount <= 0) {
                     nonFittingItems.add(simulatedExtract);
                 }
