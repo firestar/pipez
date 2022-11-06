@@ -17,6 +17,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class TileInfoProvider implements IProbeInfoProvider {
 
     public static final ResourceLocation ID = new ResourceLocation(Main.MODID, "probeinfoprovider");
@@ -49,6 +52,15 @@ public class TileInfoProvider implements IProbeInfoProvider {
             ItemStack upgrade = pipeTile.getUpgradeItem(selectedSide);
 
             IProbeInfo i;
+            List<PipeType<?>> types = pipeTile.getExtractingTypes(selectedSide);
+            List<String> typeStr = new LinkedList<>();
+            for (PipeType<?> type : types) {
+                typeStr.add(type.getKeyText().getString());
+            }
+            if(typeStr.size()>0) {
+                info = info.text(new TranslatableComponent("tooltip.pipez.types", typeStr.stream().reduce("", (out, r) -> out + (out.equals("") ? "" : ", ") + r)));
+            }
+
             if (upgrade.isEmpty()) {
                 i = info.text(new TranslatableComponent("tooltip.pipez.no_upgrade"));
             } else {
@@ -57,11 +69,13 @@ public class TileInfoProvider implements IProbeInfoProvider {
                         .vertical()
                         .itemLabel(upgrade);
             }
-            for (PipeType<?> type : pipeTile.getPipeTypes()) {
+
+            for (PipeType<?> type : types) {
                 if (pipeTile.isEnabled(selectedSide, type)) {
                     i = i.text(type.getTransferText(pipeTile.getUpgrade(selectedSide)));
                 }
             }
+
         }
     }
 }
