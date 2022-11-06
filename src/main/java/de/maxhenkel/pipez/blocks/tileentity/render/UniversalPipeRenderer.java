@@ -62,16 +62,16 @@ public class UniversalPipeRenderer extends PipeRenderer {
     @Override
     public void render(PipeTileEntity pipe, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         for (Direction side : Direction.values()) {
-            String code = (pipe.isExtractingItems(side)?1:0)+""+(pipe.isExtractingFluids(side)?1:0)+""+(pipe.isExtractingEnergy(side)?1:0);
+            int code = Integer.valueOf((pipe.isExtractingItems(side)?1:0)+""+(pipe.isExtractingFluids(side)?1:0)+""+(pipe.isExtractingEnergy(side)?1:0));
             switch (code){
                 //    ife
-                case "111" -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 0);
-                case "100" -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 1);
-                case "010" -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 2);
-                case "001" -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 3);
-                case "101" -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 4);
-                case "011" -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 5);
-                case "110" -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 6);
+                case 111 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 0);
+                case 100 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 1);
+                case 010 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 2);
+                case 001 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 3);
+                case 101 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 4);
+                case 110 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 5);
+                case 011 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 6);
             }
         }
     }
