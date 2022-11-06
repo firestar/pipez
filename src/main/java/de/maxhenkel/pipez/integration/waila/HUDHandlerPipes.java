@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class HUDHandlerPipes implements IComponentProvider, IServerDataProvider<BlockEntity> {
@@ -31,6 +32,9 @@ public class HUDHandlerPipes implements IComponentProvider, IServerDataProvider<
     @Override
     public void appendTooltip(ITooltip iTooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
         CompoundTag compound = blockAccessor.getServerData();
+        if (compound.contains("Types", Tag.TAG_STRING)) {
+            iTooltip.add(Component.Serializer.fromJson(compound.getString("Types")));
+        }
         if (compound.contains("Upgrade", Tag.TAG_STRING)) {
             iTooltip.add(Component.Serializer.fromJson(compound.getString("Upgrade")));
         }
@@ -63,12 +67,15 @@ public class HUDHandlerPipes implements IComponentProvider, IServerDataProvider<
                 compound.putString("Upgrade", Component.Serializer.toJson(upgrade.getHoverName()));
             }
 
+            List<String> types = new LinkedList<>();
             List<Component> tooltips = new ArrayList<>();
-            for (PipeType<?> pipeType : pipeTile.getPipeTypes()) {
-                if (pipeTile.isEnabled(selectedSide, pipeType) && pipeTile.isExtractingOnSide(selectedSide, pipeType)) {
+            for (PipeType<?> pipeType : pipeTile.getExtractingTypes(selectedSide)) {
+                if (pipeTile.isEnabled(selectedSide, pipeType)) {
                     tooltips.add(pipeType.getTransferText(pipeTile.getUpgrade(selectedSide)));
                 }
+                types.add(pipeType.getKeyText().getString());
             }
+            compound.putString("Types", Component.Serializer.toJson(new TranslatableComponent("tooltip.pipez.types", types.stream().reduce("", (out, r)->out+(out.equals("")?"":", ")+r))));
             putTooltips(compound, tooltips);
         }
     }

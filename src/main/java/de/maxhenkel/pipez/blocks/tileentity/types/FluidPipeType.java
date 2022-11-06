@@ -58,6 +58,10 @@ public class FluidPipeType extends PipeType<Fluid> {
     public Component getTransferText(@Nullable Upgrade upgrade) {
         return new TranslatableComponent("tooltip.pipez.rate.fluid", getRate(upgrade));
     }
+    @Override
+    public Component getKeyText(){
+        return new TranslatableComponent("tooltip.pipez.fluid");
+    }
 
     @Override
     public void tick(PipeLogicTileEntity tileEntity) {

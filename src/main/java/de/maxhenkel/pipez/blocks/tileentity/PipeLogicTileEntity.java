@@ -19,6 +19,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class PipeLogicTileEntity extends UpgradeTileEntity {
 
@@ -97,9 +100,23 @@ public abstract class PipeLogicTileEntity extends UpgradeTileEntity {
         return false;
     }
 
+
     public int getPreferredPipeIndex(Direction side) {
         for (int i = 0; i < types.length; i++) {
             if (isEnabled(side, types[i])) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public List<PipeType<?>> getExtractingTypes(Direction side){
+        return Arrays.stream(types).filter(c->isExtractingOnSide(side, c)).collect(Collectors.toList());
+    }
+    public int getPreferredPipeIndexOfExtracting(Direction side) {
+        List<PipeType<?>> extractingTypes = getExtractingTypes(side);
+        for (int i = 0; i < extractingTypes.size(); i++) {
+            if (isEnabled(side, extractingTypes.get(i))) {
                 return i;
             }
         }

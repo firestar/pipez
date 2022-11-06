@@ -52,6 +52,7 @@
   "tooltip.pipez.rate.fluid": "Transferring %s mB every tick",
   "tooltip.pipez.rate.energy": "Transferring %s FE every tick",
   "tooltip.pipez.rate.gas": "Transferring %s mB gas every tick",
+  "tooltip.pipez.types": "Transferring Types: %s",
   "tooltip.pipez.no_upgrade": "No Upgrade",
   "tooltip.pipez.energy": "Energy",
   "tooltip.pipez.fluid": "Fluid",

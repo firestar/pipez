@@ -36,6 +36,11 @@ public class ItemPipeType extends PipeType<Item> {
     }
 
     @Override
+    public Component getKeyText(){
+        return new TranslatableComponent("tooltip.pipez.item");
+    }
+
+    @Override
     public boolean canInsert(BlockEntity tileEntity, Direction direction) {
         return tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction).isPresent();
     }

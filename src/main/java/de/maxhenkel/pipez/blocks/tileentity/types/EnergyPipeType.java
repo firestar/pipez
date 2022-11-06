@@ -32,6 +32,11 @@ public class EnergyPipeType extends PipeType<Void> {
     }
 
     @Override
+    public Component getKeyText(){
+        return new TranslatableComponent("tooltip.pipez.energy");
+    }
+
+    @Override
     public boolean canInsert(BlockEntity tileEntity, Direction direction) {
         return tileEntity.getCapability(CapabilityEnergy.ENERGY, direction).isPresent();
     }

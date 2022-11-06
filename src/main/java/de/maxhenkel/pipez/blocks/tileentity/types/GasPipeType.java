@@ -32,6 +32,10 @@ public class GasPipeType extends PipeType<Gas> {
     public String getKey() {
         return "Gas";
     }
+    @Override
+    public Component getKeyText(){
+        return new TranslatableComponent("tooltip.pipez.gas");
+    }
 
     @Override
     public boolean canInsert(BlockEntity tileEntity, Direction direction) {

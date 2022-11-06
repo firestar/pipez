@@ -19,6 +19,7 @@ import java.util.Set;
 public abstract class PipeType<T> {
 
     public abstract String getKey();
+    public abstract Component getKeyText();
 
     public abstract void tick(PipeLogicTileEntity tileEntity);
 

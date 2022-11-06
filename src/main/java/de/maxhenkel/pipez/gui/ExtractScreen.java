@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class ExtractScreen extends ScreenBase<ExtractContainer> {
 
@@ -58,18 +59,24 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
 
     private FilterList filterList;
 
+    private PipeLogicTileEntity pipeLogicTileEntity;
+
     public ExtractScreen(ExtractContainer container, Inventory playerInventory, Component title) {
         super(BACKGROUND, container, playerInventory, title);
         imageWidth = 176;
         imageHeight = 196;
 
-        pipeTypes = container.getPipe().getPipeTypes();
+        pipeLogicTileEntity = container.getPipe();
+
+        pipeTypes = (PipeType<?>[]) container.getPipe().getExtractingTypes(container.getSide()).toArray();
+
+
         if (pipeTypes.length > 1) {
             tabs = new HoverArea[pipeTypes.length];
         }
         currentindex = container.getIndex();
         if (currentindex < 0) {
-            currentindex = getMenu().getPipe().getPreferredPipeIndex(getMenu().getSide());
+            currentindex = getMenu().getPipe().getPreferredPipeIndexOfExtracting(getMenu().getSide());
         }
     }
 
