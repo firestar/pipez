@@ -111,17 +111,17 @@ public class ItemPipeType extends PipeType<Item> {
                     if (simulatedExtract.isEmpty()) {
                         continue;
                     }
-                    System.out.println("=====================================");
-                    System.out.println(connection.getPos().toString());
+//                    System.out.println("=====================================");
+//                    System.out.println(connection.getPos().toString());
                     if (canInsert(connection, simulatedExtract, tileEntity.getFilters(side, this)) == tileEntity.getFilterMode(side, this).equals(UpgradeTileEntity.FilterMode.BLACKLIST)) {
-                        System.out.println("skipping: "+connection.getPos());
+//                        System.out.println("skipping: "+connection.getPos());
                         continue;
                     }
 
 
                     ItemStack stack = ItemHandlerHelper.insertItem(destination, simulatedExtract, false);
                     int insertedAmount = simulatedExtract.getCount() - stack.getCount();
-                    System.out.println("sending "+insertedAmount+" "+simulatedExtract.getItem().getRegistryName()+" to: "+connection.getPos());
+//                    System.out.println("sending "+insertedAmount+" "+simulatedExtract.getItem().getRegistryName()+" to: "+connection.getPos());
 
                     if (insertedAmount > 0) {
                         itemsToTransfer -= insertedAmount;
@@ -163,20 +163,20 @@ public class ItemPipeType extends PipeType<Item> {
                 if (simulatedExtract.isEmpty()) {
                     continue;
                 }
-                System.out.println("=====================================");
-                System.out.println(connection.getPos().toString());
+//                System.out.println("=====================================");
+//                System.out.println(connection.getPos().toString());
 
                 if (nonFittingItems.stream().anyMatch(stack -> ItemUtils.isStackable(stack, simulatedExtract))) {
                     continue;
                 }
                 if (canInsert(connection, simulatedExtract, tileEntity.getFilters(side, this)) == tileEntity.getFilterMode(side, this).equals(UpgradeTileEntity.FilterMode.BLACKLIST)) {
-                    System.out.println("skipping: "+connection.getPos());
+//                    System.out.println("skipping: "+connection.getPos());
                     continue;
                 }
-                System.out.println("sending to: "+connection.getPos());
+//                System.out.println("sending to: "+connection.getPos());
                 ItemStack stack = ItemHandlerHelper.insertItem(destination, simulatedExtract, false);
                 int insertedAmount = simulatedExtract.getCount() - stack.getCount();
-                System.out.println("sending "+insertedAmount+" "+simulatedExtract.getItem().getRegistryName()+" to: "+connection.getPos());
+//                System.out.println("sending "+insertedAmount+" "+simulatedExtract.getItem().getRegistryName()+" to: "+connection.getPos());
                 if (insertedAmount <= 0) {
                     nonFittingItems.add(simulatedExtract);
                 }
@@ -199,18 +199,18 @@ public class ItemPipeType extends PipeType<Item> {
     private boolean canInsert(PipeTileEntity.Connection connection, ItemStack stack, List<Filter<?>> filters) {
         for (Filter<Item> filter : filters.stream().map(filter -> (Filter<Item>) filter).filter(Filter::isInvert).collect(Collectors.toList())) {
             if (matches(filter, stack) && matchesConnection(connection, filter)) {
-                System.out.println("can Insert?: false");
+//                System.out.println("can Insert?: false");
                 return false;
             }
         }
         List<Filter<Item>> collect = filters.stream().map(filter -> (Filter<Item>) filter).filter(f -> !f.isInvert()).collect(Collectors.toList());
         if (collect.isEmpty()) {
-            System.out.println("can Insert?: true");
+//            System.out.println("can Insert?: true");
             return true;
         }
 
         boolean matchesAny = collect.stream().filter(filter -> matches(filter, stack)).filter(f->matchesConnection(connection, f)).count()>0;
-        System.out.println("can Insert?: "+matchesAny);
+//        System.out.println("can Insert?: "+matchesAny);
         return matchesAny;
     }
 
@@ -218,19 +218,19 @@ public class ItemPipeType extends PipeType<Item> {
         CompoundTag metadata = filter.getMetadata();
         if (metadata == null) {
             boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
-            System.out.println("no match run, now checking item: "+result);
-            System.out.println(stack.getItem());
+//            System.out.println("no match run, now checking item: "+result);
+//            System.out.println(stack.getItem());
             return result;
         }
         if (filter.isExactMetadata()) {
             if (deepExactCompare(metadata, stack.getTag())) {
                 boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
-                System.out.println("exact match passed for exact compare, now checking item: "+result);
-                System.out.println(stack.getItem());
+//                System.out.println("exact match passed for exact compare, now checking item: "+result);
+//                System.out.println(stack.getItem());
                 return result;
             } else {
-                System.out.println("exact match failed for exact compare.");
-                System.out.println(stack.getItem());
+//                System.out.println("exact match failed for exact compare.");
+//                System.out.println(stack.getItem());
                 return false;
             }
         } else {
@@ -239,13 +239,13 @@ public class ItemPipeType extends PipeType<Item> {
 //                return metadata.size() <= 0;
 //            }
             if (!deepFuzzyCompare(metadata, stackNBT)) {
-                System.out.println("deep fuzzy match failed, now checking item");
-                System.out.println(stack.getItem());
+//                System.out.println("deep fuzzy match failed, now checking item");
+//                System.out.println(stack.getItem());
                 return false;
             }
             boolean result = filter.getTag() == null || filter.getTag().contains(stack.getItem());
-            System.out.println("deep fuzzy match success, now checking item: "+result);
-            System.out.println(stack.getItem());
+//            System.out.println("deep fuzzy match success, now checking item: "+result);
+//            System.out.println(stack.getItem());
             return result;
         }
     }

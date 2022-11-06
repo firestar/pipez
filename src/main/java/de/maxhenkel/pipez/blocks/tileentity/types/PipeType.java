@@ -56,16 +56,16 @@ public abstract class PipeType<T> {
 
     public boolean matchesConnection(PipeTileEntity.Connection connection, Filter<T> filter) {
         if (filter.getDestination() == null) {
-            System.out.println("no destination set, skipping");
+            //System.out.println("no destination set, skipping");
             return true;
         }
-        System.out.println(filter.getDestination().getPos() + " == " + connection.getPos());
-        System.out.println(filter.getDestination().getDirection().getName() + " == " + connection.getDirection().getName());
-        System.out.println(filter.getDestination().getDirection().getStepX() + " == " + connection.getDirection().getStepX());
-        System.out.println(filter.getDestination().getDirection().getStepY() + " == " + connection.getDirection().getStepY());
-        System.out.println(filter.getDestination().getDirection().getStepZ() + " == " + connection.getDirection().getStepZ());
+//        System.out.println(filter.getDestination().getPos() + " == " + connection.getPos());
+//        System.out.println(filter.getDestination().getDirection().getName() + " == " + connection.getDirection().getName());
+//        System.out.println(filter.getDestination().getDirection().getStepX() + " == " + connection.getDirection().getStepX());
+//        System.out.println(filter.getDestination().getDirection().getStepY() + " == " + connection.getDirection().getStepY());
+//        System.out.println(filter.getDestination().getDirection().getStepZ() + " == " + connection.getDirection().getStepZ());
         boolean destination = filter.getDestination().equals(new DirectionalPosition(connection.getPos(), connection.getDirection()));
-        System.out.println("matched destination: " + destination);
+//        System.out.println("matched destination: " + destination);
         return destination;
     }
 

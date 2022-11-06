@@ -50,7 +50,7 @@ public class UniversalPipeBlock extends PipeBlock {
         }
 
         if (side != null) {
-            System.out.println("Hit Universal Wrench side not null");
+//            System.out.println("Hit Universal Wrench side not null");
             if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
                 boolean extractingItem = isExtractingItem(worldIn, pos, side);
                 boolean extractingFluid = isExtractingFluid(worldIn, pos, side);
@@ -58,7 +58,7 @@ public class UniversalPipeBlock extends PipeBlock {
 
                 // None selected
                 if(!extractingItem && !extractingFluid && !extractingEnergy){ // select All
-                    System.out.println("Hit Universal Wrench select all");
+//                    System.out.println("Hit Universal Wrench select all");
                     setExtracting(worldIn, pos, side, true, 0);
                     setExtracting(worldIn, pos, side, true, 1);
                     setExtracting(worldIn, pos, side, true, 2);
@@ -66,13 +66,13 @@ public class UniversalPipeBlock extends PipeBlock {
 
                 // All selected
                 }else if (extractingItem && extractingFluid && extractingEnergy){ // select Item
-                    System.out.println("Hit Universal Wrench select item");
+//                    System.out.println("Hit Universal Wrench select item");
                     setExtracting(worldIn, pos, side, true, 0);
                     setExtracting(worldIn, pos, side, false, 1);
                     setExtracting(worldIn, pos, side, false, 2);
                     setDisconnected(worldIn, pos, side, false);
                 }else if (extractingItem && !extractingFluid && !extractingEnergy){ // select Item And Fluid
-                    System.out.println("Hit Universal Wrench select item and fluid");
+//                    System.out.println("Hit Universal Wrench select item and fluid");
                     setExtracting(worldIn, pos, side, true, 0);
                     setExtracting(worldIn, pos, side, true, 1);
                     setExtracting(worldIn, pos, side, false, 2);
@@ -80,46 +80,46 @@ public class UniversalPipeBlock extends PipeBlock {
 
                     // Item and FLuid Selected
                 } else if(extractingItem && extractingFluid && !extractingEnergy){ // select fluid
-                    System.out.println("Hit Universal Wrench select fluid");
+//                    System.out.println("Hit Universal Wrench select fluid");
                     setExtracting(worldIn, pos, side, false, 0);
                     setExtracting(worldIn, pos, side, true, 1);
                     setDisconnected(worldIn, pos, side, false);
                 } else if(!extractingItem && extractingFluid && !extractingEnergy){ // select fluid and energy
-                    System.out.println("Hit Universal Wrench select fluid and energy");
+//                    System.out.println("Hit Universal Wrench select fluid and energy");
                     setExtracting(worldIn, pos, side, true, 1);
                     setExtracting(worldIn, pos, side, true, 2);
                     setDisconnected(worldIn, pos, side, false);
 
                     // Fluid and Energy Selected
                 }else if(!extractingItem && extractingFluid && extractingEnergy){ // select energy
-                    System.out.println("Hit Universal Wrench select energy");
+//                    System.out.println("Hit Universal Wrench select energy");
                     setExtracting(worldIn, pos, side, false, 1);
                     setExtracting(worldIn, pos, side, true, 2);
                     setDisconnected(worldIn, pos, side, false);
                 }else if(!extractingItem && !extractingFluid && extractingEnergy){ // select energy and item
-                    System.out.println("Hit Universal Wrench select energy");
+//                    System.out.println("Hit Universal Wrench select energy");
                     setExtracting(worldIn, pos, side, true, 0);
                     setExtracting(worldIn, pos, side, true, 2);
                     setDisconnected(worldIn, pos, side, false);
 
                     // Energy and Item Selected
                 }else if(extractingItem && !extractingFluid && extractingEnergy){ // select disconnected
-                    System.out.println("Hit Universal Wrench disconnect");
+//                    System.out.println("Hit Universal Wrench disconnect");
                     setExtracting(worldIn, pos, side, false, 0);
                     setExtracting(worldIn, pos, side, false, 1);
                     setExtracting(worldIn, pos, side, false, 2);
                     setDisconnected(worldIn, pos, side, true);
                 }
             } else {
-                System.out.println("Hit Universal Wrench disconnect");
+//                System.out.println("Hit Universal Wrench disconnect");
                 setDisconnected(worldIn, pos, side, true);
             }
         } else {
-            System.out.println("Hit Universal Wrench side null");
+//            System.out.println("Hit Universal Wrench side null");
             // Core
             side = hit.getDirection();
             if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
-                System.out.println("Hit Universal Wrench reconnect");
+//                System.out.println("Hit Universal Wrench reconnect");
                 setExtracting(worldIn, pos, side, false, 0);
                 setExtracting(worldIn, pos, side, false, 1);
                 setExtracting(worldIn, pos, side, false, 2);
@@ -127,7 +127,7 @@ public class UniversalPipeBlock extends PipeBlock {
                     setDisconnected(worldIn, pos, side, false);
                 }
             } else {
-                System.out.println("Hit Universal Wrench reconnect");
+//                System.out.println("Hit Universal Wrench reconnect");
                 setDisconnected(worldIn, pos, side, false);
                 setDisconnected(worldIn, pos.relative(side), side.getOpposite(), false);
             }

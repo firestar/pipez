@@ -103,7 +103,7 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
             return InteractionResult.PASS;
         }
         if (side != null) {
-            System.out.println("Hit PipeBlock Wrench side not null");
+//            System.out.println("Hit PipeBlock Wrench side not null");
             if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
                 boolean extractingItem = isExtractingItem(worldIn, pos, side);
                 boolean extractingFluid = isExtractingFluid(worldIn, pos, side);
@@ -111,7 +111,7 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
 
                 // None selected
                 if(!extractingItem && !extractingFluid && !extractingEnergy){ // select All
-                    System.out.println("PipeBlock Wrench select all");
+//                    System.out.println("PipeBlock Wrench select all");
                     setExtracting(worldIn, pos, side, true, 0);
                     setExtracting(worldIn, pos, side, true, 1);
                     setExtracting(worldIn, pos, side, true, 2);
@@ -119,25 +119,25 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
 
                 // All selected
                 } else if(extractingItem && extractingFluid && extractingEnergy){ // select disconnected
-                    System.out.println("PipeBlock Wrench disconnect");
+//                    System.out.println("PipeBlock Wrench disconnect");
                     setExtracting(worldIn, pos, side, false, 0);
                     setExtracting(worldIn, pos, side, false, 1);
                     setExtracting(worldIn, pos, side, false, 2);
                     setDisconnected(worldIn, pos, side, true);
                 }
             } else {
-                System.out.println("PipeBlock Wrench disconnect");
+//                System.out.println("PipeBlock Wrench disconnect");
                 setExtracting(worldIn, pos, side, false, 0);
                 setExtracting(worldIn, pos, side, false, 1);
                 setExtracting(worldIn, pos, side, false, 2);
                 setDisconnected(worldIn, pos, side, true);
             }
         } else {
-            System.out.println("Hit PipeBlock Wrench side null");
+//            System.out.println("Hit PipeBlock Wrench side null");
             // Core
             side = hit.getDirection();
             if (worldIn.getBlockState(pos.relative(side)).getBlock() != this) {
-                System.out.println("PipeBlock Wrench reconnect");
+//                System.out.println("PipeBlock Wrench reconnect");
                 setExtracting(worldIn, pos, side, false, 0);
                 setExtracting(worldIn, pos, side, false, 1);
                 setExtracting(worldIn, pos, side, false, 2);
@@ -145,7 +145,7 @@ public abstract class PipeBlock extends Block implements IItemBlock, SimpleWater
                     setDisconnected(worldIn, pos, side, false);
                 }
             } else {
-                System.out.println("PipeBlock Wrench reconnect");
+//                System.out.println("PipeBlock Wrench reconnect");
                 setDisconnected(worldIn, pos, side, false);
                 setDisconnected(worldIn, pos.relative(side), side.getOpposite(), false);
             }

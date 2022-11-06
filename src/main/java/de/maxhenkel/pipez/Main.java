@@ -52,7 +52,7 @@ public class Main {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(IMC::enqueueIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ModTagProviders::gatherData);
-        System.out.println(ModItemTags.TOOLS_TAG);
+        //System.out.println(ModItemTags.TOOLS_TAG);
 
         SERVER_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.SERVER, ServerConfig.class);
         CLIENT_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.CLIENT, ClientConfig.class);
