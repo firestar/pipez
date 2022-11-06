@@ -16,10 +16,10 @@
       "item": "pipez:fluid_pipe"
     },
     "R": {
-      "tag": "forge:storage_blocks/redstone"
+      "tag": "forge:gems/diamond"
     },
     "M": {
-      "tag": "forge:ingots/iron"
+      "tag": "forge:gems/emerald"
     }
   },
   "result": {

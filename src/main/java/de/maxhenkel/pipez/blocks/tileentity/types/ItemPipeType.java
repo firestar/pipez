@@ -209,7 +209,7 @@ public class ItemPipeType extends PipeType<Item> {
             return true;
         }
 
-        boolean matchesAny = collect.stream().filter(filter -> matches(filter, stack)).filter(f->matchesConnection(connection, f)).count()>0;
+        boolean matchesAny = collect.stream().filter(filter -> matches(filter, stack)).filter(f -> matchesConnection(connection, f)).count() > 0;
 //        System.out.println("can Insert?: "+matchesAny);
         return matchesAny;
     }

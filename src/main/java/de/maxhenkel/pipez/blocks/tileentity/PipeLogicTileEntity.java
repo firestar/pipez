@@ -1,9 +1,6 @@
 package de.maxhenkel.pipez.blocks.tileentity;
 
-import de.maxhenkel.pipez.blocks.tileentity.types.EnergyPipeType;
-import de.maxhenkel.pipez.blocks.tileentity.types.FluidPipeType;
-import de.maxhenkel.pipez.blocks.tileentity.types.ItemPipeType;
-import de.maxhenkel.pipez.blocks.tileentity.types.PipeType;
+import de.maxhenkel.pipez.blocks.tileentity.types.*;
 import de.maxhenkel.pipez.utils.DirectionalLazyOptionalCache;
 import de.maxhenkel.pipez.utils.DummyFluidHandler;
 import de.maxhenkel.pipez.utils.DummyItemHandler;
@@ -86,6 +83,18 @@ public abstract class PipeLogicTileEntity extends UpgradeTileEntity {
     public boolean isEnabled(Direction side, PipeType<?> pipeType) {
         UpgradeTileEntity.RedstoneMode redstoneMode = getRedstoneMode(side, pipeType);
         return redstoneMode != UpgradeTileEntity.RedstoneMode.ALWAYS_OFF;
+    }
+    public boolean isExtractingOnSide(Direction side, PipeType<?> pipeType) {
+        if(pipeType.equals(ItemPipeType.INSTANCE)){
+            return isExtractingItems(side);
+        } else if(pipeType.equals(FluidPipeType.INSTANCE)){
+            return isExtractingFluids(side);
+        } else if(pipeType.equals(GasPipeType.INSTANCE)){
+            return isExtractingFluids(side);
+        } else if(pipeType.equals(EnergyPipeType.INSTANCE)){
+            return isExtractingEnergy(side);
+        }
+        return false;
     }
 
     public int getPreferredPipeIndex(Direction side) {

@@ -65,7 +65,7 @@ public class HUDHandlerPipes implements IComponentProvider, IServerDataProvider<
 
             List<Component> tooltips = new ArrayList<>();
             for (PipeType<?> pipeType : pipeTile.getPipeTypes()) {
-                if (pipeTile.isEnabled(selectedSide, pipeType)) {
+                if (pipeTile.isEnabled(selectedSide, pipeType) && pipeTile.isExtractingOnSide(selectedSide, pipeType)) {
                     tooltips.add(pipeType.getTransferText(pipeTile.getUpgrade(selectedSide)));
                 }
             }
