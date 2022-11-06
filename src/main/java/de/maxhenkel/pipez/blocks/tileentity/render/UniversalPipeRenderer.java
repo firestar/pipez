@@ -67,11 +67,11 @@ public class UniversalPipeRenderer extends PipeRenderer {
                 //    ife
                 case 111 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 0);
                 case 100 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 1);
-                case 010 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 2);
-                case 001 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 3);
+                case 10 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 2);
+                case 1 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 3);
                 case 101 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 4);
                 case 110 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 5);
-                case 011 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 6);
+                case 11 -> renderModelSide(side, matrixStack, buffer, combinedLight, combinedOverlay, 6);
             }
         }
     }
