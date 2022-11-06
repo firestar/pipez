@@ -23,7 +23,10 @@ public class UniversalPipeRenderer extends PipeRenderer {
             getModelAll().getCachedModel(),
             getModelItem().getCachedModel(),
             getModelFluid().getCachedModel(),
-            getModelEnergy().getCachedModel()
+            getModelEnergy().getCachedModel(),
+            getModelItemEnergy().getCachedModel(),
+            getModelFluidItem().getCachedModel(),
+            getModelEnergyFluid().getCachedModel(),
         };
     }
 
@@ -34,40 +37,42 @@ public class UniversalPipeRenderer extends PipeRenderer {
     Model getModelItem() {
         return Model.UNIVERSAL_PIPE_EXTRACT_ITEM_ONLY;
     }
+    Model getModelItemEnergy() {
+        return Model.UNIVERSAL_PIPE_EXTRACT_ITEM_AND_ENERGY;
+    }
     Model getModelFluid() {
         return Model.UNIVERSAL_PIPE_EXTRACT_FLUID_ONLY;
+    }
+    Model getModelFluidItem() {
+        return Model.UNIVERSAL_PIPE_EXTRACT_FLUID_AND_ITEM;
     }
     Model getModelEnergy() {
         return Model.UNIVERSAL_PIPE_EXTRACT_ENERGY_ONLY;
     }
+    Model getModelEnergyFluid() {
+        return Model.UNIVERSAL_PIPE_EXTRACT_ENERGY_AND_FLUID;
+    }
 
+    private void renderModel(Direction side, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay, int cache ){
+        BakedModel iBakedModel = cachedModels[cache].get();
+        List<BakedQuad> quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
+        VertexConsumer b = buffer.getBuffer(RenderType.solid());
+        renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
+    }
     @Override
     public void render(PipeTileEntity pipe, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         for (Direction side : Direction.values()) {
-            VertexConsumer b = null;
-            List<BakedQuad> quads = null;
-            if (pipe.isExtractingItems(side) && pipe.isExtractingFluids(side) && pipe.isExtractingEnergy(side)) {
-                BakedModel iBakedModel = cachedModels[0].get();
-                quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
-                b = buffer.getBuffer(RenderType.solid());
-                renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
-            }else if (pipe.isExtractingItems(side) && !pipe.isExtractingFluids(side) && !pipe.isExtractingEnergy(side)) {
-                BakedModel iBakedModel = cachedModels[1].get();
-                quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
-                b = buffer.getBuffer(RenderType.solid());
-                renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
-            }else if (pipe.isExtractingFluids(side) && !pipe.isExtractingItems(side) && !pipe.isExtractingEnergy(side)) {
-                BakedModel iBakedModel = cachedModels[2].get();
-                quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
-                b = buffer.getBuffer(RenderType.solid());
-                renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
-            }else if (pipe.isExtractingEnergy(side) && !pipe.isExtractingFluids(side) && !pipe.isExtractingItems(side)) {
-                BakedModel iBakedModel = cachedModels[3].get();
-                quads = iBakedModel.getQuads(null, null, minecraft.level.random, EmptyModelData.INSTANCE);
-                b = buffer.getBuffer(RenderType.solid());
-                renderExtractor(side, matrixStack, b, quads, combinedLight, combinedOverlay);
+            String code = (pipe.isExtractingItems(side)?1:0)+""+(pipe.isExtractingFluids(side)?1:0)+""+(pipe.isExtractingEnergy(side)?1:0);
+            switch (code){
+                //    ife
+                case "111" -> renderModel(side, matrixStack, buffer, combinedLight, combinedOverlay, 0);
+                case "100" -> renderModel(side, matrixStack, buffer, combinedLight, combinedOverlay, 1);
+                case "010" -> renderModel(side, matrixStack, buffer, combinedLight, combinedOverlay, 2);
+                case "001" -> renderModel(side, matrixStack, buffer, combinedLight, combinedOverlay, 3);
+                case "101" -> renderModel(side, matrixStack, buffer, combinedLight, combinedOverlay, 4);
+                case "011" -> renderModel(side, matrixStack, buffer, combinedLight, combinedOverlay, 5);
+                case "110" -> renderModel(side, matrixStack, buffer, combinedLight, combinedOverlay, 6);
             }
-
         }
     }
 

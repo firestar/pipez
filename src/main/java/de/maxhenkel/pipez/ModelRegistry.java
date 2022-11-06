@@ -18,8 +18,11 @@ public class ModelRegistry {
         ITEM_PIPE_EXTRACT("block/item_pipe_extract"),
         UNIVERSAL_PIPE_EXTRACT("block/universal_pipe_extract"),
         UNIVERSAL_PIPE_EXTRACT_FLUID_ONLY("block/universal_pipe_extract_fluid"),
+        UNIVERSAL_PIPE_EXTRACT_FLUID_AND_ITEM("block/universal_pipe_extract_fluid_item"),
         UNIVERSAL_PIPE_EXTRACT_ITEM_ONLY("block/universal_pipe_extract_item"),
-        UNIVERSAL_PIPE_EXTRACT_ENERGY_ONLY("block/universal_pipe_extract_energy");
+        UNIVERSAL_PIPE_EXTRACT_ITEM_AND_ENERGY("block/universal_pipe_extract_item_energy"),
+        UNIVERSAL_PIPE_EXTRACT_ENERGY_ONLY("block/universal_pipe_extract_energy"),
+        UNIVERSAL_PIPE_EXTRACT_ENERGY_AND_FLUID("block/universal_pipe_extract_energy_fluid");
 
         private final ResourceLocation resource;
         private final CachedValue<BakedModel> cachedModel;
