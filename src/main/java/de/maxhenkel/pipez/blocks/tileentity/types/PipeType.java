@@ -195,7 +195,7 @@ public abstract class PipeType<T> {
                         itemCompound = (CompoundTag) stackTag;
                         if (filterMatchOnKey instanceof ListTag) {
                             ListTag filterMatchOnKeyList = (ListTag) filterMatchOnKey;
-                            return !filterMatchOnKeyList.stream().allMatch(filterMatchOnKeyListItem -> {
+                            return !filterMatchOnKeyList.stream().anyMatch(filterMatchOnKeyListItem -> {
                                 if (filterMatchOnKeyListItem instanceof StringTag)
                                     return itemCompound.contains(filterMatchOnKeyListItem.getAsString());
                                 return false;
