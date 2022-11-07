@@ -54,7 +54,7 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
 
 
     private HoverArea[] tabs;
-    private PipeType<?>[] pipeTypes;
+    private List<PipeType<?>> pipeTypes;
     private int currentindex;
 
     private FilterList filterList;
@@ -68,11 +68,11 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
 
         pipeLogicTileEntity = container.getPipe();
 
-        pipeTypes = (PipeType<?>[]) container.getPipe().getExtractingTypes(container.getSide()).toArray();
+        pipeTypes = container.getPipe().getExtractingTypes(container.getSide());
 
 
-        if (pipeTypes.length > 1) {
-            tabs = new HoverArea[pipeTypes.length];
+        if (pipeTypes.size() > 1) {
+            tabs = new HoverArea[pipeTypes.size()];
         }
         currentindex = container.getIndex();
         if (currentindex < 0) {
@@ -89,34 +89,36 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
         PipeLogicTileEntity pipe = getMenu().getPipe();
         Direction side = getMenu().getSide();
 
-        filterList = new FilterList(this, 32, 8, 136, 66, () -> pipe.getFilters(side, pipeTypes[currentindex]));
+        PipeType<?> pipeType = pipeTypes.get(currentindex);
 
-        Supplier<Integer> redstoneModeIndex = () -> pipe.getRedstoneMode(getMenu().getSide(), pipeTypes[currentindex]).ordinal();
+        filterList = new FilterList(this, 32, 8, 136, 66, () -> pipe.getFilters(side, pipeType));
+
+        Supplier<Integer> redstoneModeIndex = () -> pipe.getRedstoneMode(getMenu().getSide(), pipeType).ordinal();
         List<CycleIconButton.Icon> redstoneModeIcons = Arrays.asList(new CycleIconButton.Icon(BACKGROUND, 176, 16), new CycleIconButton.Icon(BACKGROUND, 192, 16), new CycleIconButton.Icon(BACKGROUND, 208, 16), new CycleIconButton.Icon(BACKGROUND, 224, 16));
         redstoneButton = new CycleIconButton(leftPos + 7, topPos + 7, redstoneModeIcons, redstoneModeIndex, button -> {
             Main.SIMPLE_CHANNEL.sendToServer(new CycleRedstoneModeMessage(currentindex));
         });
-        Supplier<Integer> distributionIndex = () -> pipe.getDistribution(getMenu().getSide(), pipeTypes[currentindex]).ordinal();
+        Supplier<Integer> distributionIndex = () -> pipe.getDistribution(getMenu().getSide(), pipeType).ordinal();
         List<CycleIconButton.Icon> distributionIcons = Arrays.asList(new CycleIconButton.Icon(BACKGROUND, 176, 0), new CycleIconButton.Icon(BACKGROUND, 192, 0), new CycleIconButton.Icon(BACKGROUND, 208, 0), new CycleIconButton.Icon(BACKGROUND, 224, 0));
         sortButton = new CycleIconButton(leftPos + 7, topPos + 31, distributionIcons, distributionIndex, button -> {
             Main.SIMPLE_CHANNEL.sendToServer(new CycleDistributionMessage(currentindex));
         });
-        Supplier<Integer> filterModeIndex = () -> pipeTypes[currentindex].hasFilter() ? pipe.getFilterMode(getMenu().getSide(), pipeTypes[currentindex]).ordinal() : 0;
+        Supplier<Integer> filterModeIndex = () -> pipeType.hasFilter() ? pipe.getFilterMode(getMenu().getSide(), pipeType).ordinal() : 0;
         List<CycleIconButton.Icon> filterModeIcons = Arrays.asList(new CycleIconButton.Icon(BACKGROUND, 176, 32), new CycleIconButton.Icon(BACKGROUND, 192, 32));
         filterButton = new CycleIconButton(leftPos + 7, topPos + 55, filterModeIcons, filterModeIndex, button -> {
             Main.SIMPLE_CHANNEL.sendToServer(new CycleFilterModeMessage(currentindex));
         });
         addFilterButton = new Button(leftPos + 31, topPos + 79, 40, 20, new TranslatableComponent("message.pipez.filter.add"), button -> {
-            Main.SIMPLE_CHANNEL.sendToServer(new EditFilterMessage(pipeTypes[currentindex].createFilter(), currentindex));
+            Main.SIMPLE_CHANNEL.sendToServer(new EditFilterMessage(pipeType.createFilter(), currentindex));
         });
         editFilterButton = new Button(leftPos + 80, topPos + 79, 40, 20, new TranslatableComponent("message.pipez.filter.edit"), button -> {
             if (filterList.getSelected() >= 0) {
-                Main.SIMPLE_CHANNEL.sendToServer(new EditFilterMessage(pipe.getFilters(side, pipeTypes[currentindex]).get(filterList.getSelected()), currentindex));
+                Main.SIMPLE_CHANNEL.sendToServer(new EditFilterMessage(pipe.getFilters(side, pipeType).get(filterList.getSelected()), currentindex));
             }
         });
         removeFilterButton = new Button(leftPos + 129, topPos + 79, 40, 20, new TranslatableComponent("message.pipez.filter.remove"), button -> {
             if (filterList.getSelected() >= 0) {
-                Main.SIMPLE_CHANNEL.sendToServer(new RemoveFilterMessage(pipe.getFilters(side, pipeTypes[currentindex]).get(filterList.getSelected()).getId(), currentindex));
+                Main.SIMPLE_CHANNEL.sendToServer(new RemoveFilterMessage(pipe.getFilters(side, pipeType).get(filterList.getSelected()).getId(), currentindex));
             }
         });
 
@@ -128,11 +130,11 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
         addRenderableWidget(removeFilterButton);
 
         if (hasTabs()) {
-            for (int i = 0; i < pipeTypes.length; i++) {
+            for (int i = 0; i < pipeTypes.size(); i++) {
                 int tabIndex = i;
                 tabs[i] = new HoverArea(-26 + 3, 5 + 25 * i, 24, 24, () -> {
                     List<FormattedCharSequence> tooltip = new ArrayList<>();
-                    tooltip.add(new TranslatableComponent(pipeTypes[tabIndex].getTranslationKey()).getVisualOrderText());
+                    tooltip.add(new TranslatableComponent(pipeTypes.get(tabIndex).getTranslationKey()).getVisualOrderText());
                     return tooltip;
                 });
                 hoverAreas.add(tabs[i]);
@@ -141,21 +143,21 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
 
         redstoneArea = new HoverArea(7, 7, 20, 20, () -> {
             if (redstoneButton.active) {
-                return Arrays.asList(new TranslatableComponent("tooltip.pipez.redstone_mode", new TranslatableComponent("tooltip.pipez.redstone_mode." + pipe.getRedstoneMode(side, pipeTypes[currentindex]).getName())).getVisualOrderText());
+                return Arrays.asList(new TranslatableComponent("tooltip.pipez.redstone_mode", new TranslatableComponent("tooltip.pipez.redstone_mode." + pipe.getRedstoneMode(side, pipeType).getName())).getVisualOrderText());
             } else {
                 return Collections.emptyList();
             }
         });
         sortArea = new HoverArea(7, 31, 20, 20, () -> {
             if (sortButton.active) {
-                return Arrays.asList(new TranslatableComponent("tooltip.pipez.distribution", new TranslatableComponent("tooltip.pipez.distribution." + pipe.getDistribution(side, pipeTypes[currentindex]).getName())).getVisualOrderText());
+                return Arrays.asList(new TranslatableComponent("tooltip.pipez.distribution", new TranslatableComponent("tooltip.pipez.distribution." + pipe.getDistribution(side, pipeType).getName())).getVisualOrderText());
             } else {
                 return Collections.emptyList();
             }
         });
         filterArea = new HoverArea(7, 55, 20, 20, () -> {
             if (filterButton.active) {
-                return Arrays.asList(new TranslatableComponent("tooltip.pipez.filter_mode", new TranslatableComponent("tooltip.pipez.filter_mode." + pipe.getFilterMode(side, pipeTypes[currentindex]).getName())).getVisualOrderText());
+                return Arrays.asList(new TranslatableComponent("tooltip.pipez.filter_mode", new TranslatableComponent("tooltip.pipez.filter_mode." + pipe.getFilterMode(side, pipeType).getName())).getVisualOrderText());
             } else {
                 return Collections.emptyList();
             }
@@ -198,10 +200,11 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
             editFilterButton.active = false;
             removeFilterButton.active = false;
         } else {
+            PipeType<?> pipeType = pipeTypes.get(currentindex);
             redstoneButton.active = true;
             sortButton.active = true;
-            filterButton.active = pipeTypes[currentindex].hasFilter();
-            addFilterButton.active = pipeTypes[currentindex].hasFilter();
+            filterButton.active = pipeType.hasFilter();
+            addFilterButton.active = pipeType.hasFilter();
             editFilterButton.active = filterList.getSelected() >= 0;
             removeFilterButton.active = filterList.getSelected() >= 0;
         }
@@ -223,18 +226,18 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
         filterList.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
 
         if (hasTabs()) {
-            for (int i = 0; i < pipeTypes.length; i++) {
+            for (int i = 0; i < pipeTypes.size(); i++) {
                 if (i == currentindex) {
                     blit(matrixStack, leftPos - 26 + 3, topPos + 5 + 25 * i, 176, 48, 26, 24);
                 } else {
                     blit(matrixStack, leftPos - 26 + 3, topPos + 5 + 25 * i, 176, 72, 26, 24);
                 }
             }
-            for (int i = 0; i < pipeTypes.length; i++) {
+            for (int i = 0; i < pipeTypes.size(); i++) {
                 if (i == currentindex) {
-                    itemRenderer.renderAndDecorateItem(minecraft.player, pipeTypes[i].getIcon(), leftPos - 26 + 3 + 4, topPos + 5 + 25 * i + 4, 0);
+                    itemRenderer.renderAndDecorateItem(minecraft.player, pipeTypes.get(i).getIcon(), leftPos - 26 + 3 + 4, topPos + 5 + 25 * i + 4, 0);
                 } else {
-                    itemRenderer.renderAndDecorateItem(minecraft.player, pipeTypes[i].getIcon(), leftPos - 26 + 3 + 4 + 2, topPos + 5 + 25 * i + 4, 0);
+                    itemRenderer.renderAndDecorateItem(minecraft.player, pipeTypes.get(i).getIcon(), leftPos - 26 + 3 + 4 + 2, topPos + 5 + 25 * i + 4, 0);
                 }
             }
         }
@@ -300,7 +303,7 @@ public class ExtractScreen extends ScreenBase<ExtractContainer> {
             return;
         }
 
-        Filter<?> filter = pipeTypes[currentindex].createFilter();
+        Filter<?> filter = pipeTypes.get(currentindex).createFilter();
         filter.setExactMetadata(true);
 
         if (filter instanceof ItemFilter) {
